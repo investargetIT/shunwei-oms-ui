@@ -1,0 +1,668 @@
+import { addRule, removeRule, rule, updateRule } from '@/services/ant-design-pro/api';
+import { PlusOutlined } from '@ant-design/icons';
+import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
+import {
+  FooterToolbar,
+  ModalForm,
+  PageContainer,
+  ProDescriptions,
+  ProFormText,
+  ProFormTextArea,
+  ProTable,
+  StepsForm,
+  ProFormSelect,
+  ProFormDatePicker
+} from '@ant-design/pro-components';
+import { FormattedMessage, useIntl } from '@umijs/max';
+import { Button, Drawer, Input, message } from 'antd';
+import React, { useRef, useState } from 'react';
+import type { FormValueType } from './components/UpdateForm.tsx';
+import UpdateForm from './components/UpdateForm.tsx';
+
+/**
+ * @en-US Add node
+ * @zh-CN 添加节点
+ * @param fields
+ */
+const handleAdd = async (fields: API.RuleListItem) => {
+  const hide = message.loading('正在添加');
+  try {
+    await addRule({ ...fields });
+    hide();
+    message.success('Added successfully');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('Adding failed, please try again!');
+    return false;
+  }
+};
+
+/**
+ * @en-US Update node
+ * @zh-CN 更新节点
+ *
+ * @param fields
+ */
+const handleUpdate = async (fields: FormValueType) => {
+  const hide = message.loading('Configuring');
+  try {
+    await updateRule({
+      name: fields.name,
+      desc: fields.desc,
+      key: fields.key,
+    });
+    hide();
+
+    message.success('Configuration is successful');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('Configuration failed, please try again!');
+    return false;
+  }
+};
+
+/**
+ *  Delete node
+ * @zh-CN 删除节点
+ *
+ * @param selectedRows
+ */
+const handleRemove = async (selectedRows: API.RuleListItem[]) => {
+  const hide = message.loading('正在删除');
+  if (!selectedRows) return true;
+  try {
+    await removeRule({
+      key: selectedRows.map((row) => row.key),
+    });
+    hide();
+    message.success('Deleted successfully and will refresh soon');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('Delete failed, please try again');
+    return false;
+  }
+};
+
+const Supplier: React.FC = () => {
+  /**
+   * @en-US Pop-up window of new window
+   * @zh-CN 新建窗口的弹窗
+   *  */
+  const [createModalOpen, handleModalOpen] = useState<boolean>(false);
+  /**
+   * @en-US The pop-up window of the distribution update window
+   * @zh-CN 分布更新窗口的弹窗
+   * */
+  const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
+
+  const [showDetail, setShowDetail] = useState<boolean>(false);
+
+  const actionRef = useRef<ActionType>();
+  const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
+  const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
+
+  /**
+   * @en-US International configuration
+   * @zh-CN 国际化配置
+   * */
+  const intl = useIntl();
+
+  const columns: ProColumns<API.RuleListItem>[] = [
+    {
+      title: (
+        <FormattedMessage
+          id="pages.searchsupplier.no"
+        //   defaultMessage="Rule no"
+        />
+      ),
+      dataIndex: 'no',
+    //   tip: 'The rule name is the unique key',
+      render: (dom, entity) => {
+        return (
+          <a
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
+          >
+            {dom}
+          </a>
+        );
+      },
+    },
+    {
+      title: <FormattedMessage id="pages.searchsupplier.name" defaultMessage="Description" />,
+      dataIndex: 'name',
+      valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.bank_account" defaultMessage="Description" />,
+        dataIndex: 'bank_account',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.case" defaultMessage="Description" />,
+        dataIndex: 'case',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.attribute" defaultMessage="Description" />,
+        dataIndex: 'attribute',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.mode" defaultMessage="Description" />,
+        dataIndex: 'mode',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.hotel" defaultMessage="Description" />,
+        dataIndex: 'hotel',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.status" defaultMessage="Description" />,
+        dataIndex: 'status',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.contact" defaultMessage="Description" />,
+        dataIndex: 'contact',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.position" defaultMessage="Description" />,
+        dataIndex: 'position',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.telephone" defaultMessage="Description" />,
+        dataIndex: 'telephone',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.pic" defaultMessage="Description" />,
+        dataIndex: 'pic',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.contract_status" defaultMessage="Description" />,
+        dataIndex: 'contract_status',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.deal_date" defaultMessage="Description" />,
+        dataIndex: 'deal_date',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.start_date" defaultMessage="Description" />,
+        dataIndex: 'start_date',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.end_date" defaultMessage="Description" />,
+        dataIndex: 'end_date',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchsupplier.remark" defaultMessage="Description" />,
+        dataIndex: 'remark',
+        valueType: 'textarea',
+    },
+    {
+      title: <FormattedMessage id="pages.searchsupplier.operation" defaultMessage="Operating" />,
+      dataIndex: 'option',
+      valueType: 'option',
+      render: (_, record) => [
+        <a
+          key="config"
+          onClick={() => {
+            handleUpdateModalOpen(true);
+            setCurrentRow(record);
+          }}
+        >
+          <FormattedMessage id="pages.searchsupplier.edit" defaultMessage="Configuration" />
+        </a>,
+      ],
+    },
+  ];
+
+  return (
+    <PageContainer>
+      <ProTable<API.RuleListItem, API.PageParams>
+        headerTitle={intl.formatMessage({
+          id: 'pages.searchTable.title',
+          defaultMessage: 'Enquiry form',
+        })}
+        actionRef={actionRef}
+        rowKey="key"
+        search={{
+          labelWidth: 120,
+        }}
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            key="primary"
+            onClick={() => {
+              handleModalOpen(true);
+            }}
+          >
+            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
+          </Button>,
+        ]}
+        request={rule}
+        columns={columns}
+        rowSelection={{
+          onChange: (_, selectedRows) => {
+            setSelectedRows(selectedRows);
+          },
+        }}
+      />
+      {selectedRowsState?.length > 0 && (
+        <FooterToolbar
+          extra={
+            <div>
+              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
+              <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
+              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
+              &nbsp;&nbsp;
+              <span>
+                <FormattedMessage
+                  id="pages.searchTable.totalServiceCalls"
+                  defaultMessage="Total number of service calls"
+                />{' '}
+                {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)}{' '}
+                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
+              </span>
+            </div>
+          }
+        >
+          <Button
+            onClick={async () => {
+              await handleRemove(selectedRowsState);
+              setSelectedRows([]);
+              actionRef.current?.reloadAndRest?.();
+            }}
+          >
+            <FormattedMessage
+              id="pages.searchTable.batchDeletion"
+              defaultMessage="Batch deletion"
+            />
+          </Button>
+          <Button type="primary">
+            <FormattedMessage
+              id="pages.searchTable.batchApproval"
+              defaultMessage="Batch approval"
+            />
+          </Button>
+        </FooterToolbar>
+      )}
+      <ModalForm
+        title={intl.formatMessage({
+          id: 'searchsupplier.createForm.newInfo',
+          defaultMessage: '新增信息',
+        })}
+        width="400px"
+        open={createModalOpen}
+        onOpenChange={handleModalOpen}
+        onFinish={async (value) => {
+          const success = await handleAdd(value as API.RuleListItem);
+          if (success) {
+            handleModalOpen(false);
+            if (actionRef.current) {
+              actionRef.current.reload();
+            }
+          }
+        }}
+      >
+        <ProFormText
+        name="name"
+        label={intl.formatMessage({
+            id: 'pages.searchsupplier.updateForm.name',
+            defaultMessage: '名称',
+        })}
+        width="md"
+        rules={[
+            {
+            // required: true,
+            message: (
+                <FormattedMessage
+                id="pages.searchTable.updateForm.name"
+                defaultMessage="请输入名称！"
+                />
+            ),
+            },
+        ]}
+        />
+        <ProFormText
+            name="attribute"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.attribute',
+              defaultMessage: '属性',
+            })}
+            width="md"
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchTable.updateForm.attribute"
+                    defaultMessage="请输入属性！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormText
+            name="mode"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.mode',
+              defaultMessage: '合作模式',
+            })}
+            width="md"
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchTable.updateForm.mode"
+                    defaultMessage="请输入合作模式！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormText
+            name="hotel"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.hotel',
+              defaultMessage: '销售范围（酒店）',
+            })}
+            width="md"
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchTable.updateForm.hotel"
+                    defaultMessage="请输入销售范围（酒店）！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormSelect
+            name="status"
+            label={intl.formatMessage({
+              id: 'pages.searchTable.updateForm.status',
+              defaultMessage: '合作状态',
+            })}
+            width="md"
+            valueEnum={{
+              0: '确认合作',
+              1: '暂停合作',
+              2: '终止合作',
+            }}
+          />
+        <ProFormText
+        name="bank_account"
+        label={intl.formatMessage({
+            id: 'pages.searchsupplier.updateForm.bank_account',
+            defaultMessage: '银行账户',
+        })}
+        width="md"
+        rules={[
+            {
+            // required: true,
+            message: (
+                <FormattedMessage
+                id="pages.searchTable.updateForm.bank_account"
+                defaultMessage="请输入银行账户！"
+                />
+            ),
+            },
+        ]}
+        />
+        <ProFormText
+        name="case"
+        label={intl.formatMessage({
+            id: 'pages.searchsupplier.updateForm.case',
+            defaultMessage: '合作案例',
+        })}
+        width="md"
+        rules={[
+            {
+            // required: true,
+            message: (
+                <FormattedMessage
+                id="pages.searchTable.updateForm.case"
+                defaultMessage="请输入合作案例"
+                />
+            ),
+            },
+        ]}
+        />
+        <ProFormText
+            name="contact"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.contact',
+              defaultMessage: '联系人',
+            })}
+            width="md"
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchTable.updateForm.contact"
+                    defaultMessage="请输入联系人！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormText
+            name="position"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.position',
+              defaultMessage: '职位',
+            })}
+            width="md"
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchTable.updateForm.position"
+                    defaultMessage="请输入职位！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormText
+            name="telephone"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.telephone',
+              defaultMessage: '电话',
+            })}
+            width="md"
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchTable.updateForm.telephone"
+                    defaultMessage="请输入电话！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormText
+            name="pic"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.pic',
+              defaultMessage: '对接人',
+            })}
+            width="md"
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchsupplier.updateForm.pic"
+                    defaultMessage="请输入对接人！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormSelect
+            name="contract_status"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.contract_status',
+              defaultMessage: '合同状态',
+            })}
+            width="md"
+            valueEnum={{
+              0: '确认',
+              1: '暂停',
+              2: '终止',
+            }}
+          />
+          <ProFormDatePicker
+            name="deal_date"
+            width="md"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.deal_date',
+              defaultMessage: '签订日期',
+            })}
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchsupplier.updateForm.deal_date"
+                    defaultMessage="请选择签订日期！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormDatePicker
+            name="start_date"
+            width="md"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.start_date',
+              defaultMessage: '生效日期',
+            })}
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchsupplier.updateForm.start_date"
+                    defaultMessage="请选择生效日期！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormDatePicker
+            name="end_date"
+            width="md"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.end_date',
+              defaultMessage: '终止日期',
+            })}
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchsupplier.updateForm.end_date"
+                    defaultMessage="请选择终止日期！"
+                  />
+                ),
+              },
+            ]}
+          />
+          <ProFormTextArea
+            name="remark"
+            width="md"
+            label={intl.formatMessage({
+              id: 'pages.searchsupplier.updateForm.remark',
+              defaultMessage: '备注',
+            })}
+            // placeholder={intl.formatMessage({
+            //   id: 'pages.searchsupplier.updateForm.remark',
+            //   defaultMessage: '请输入备注！',
+            // })}
+            rules={[
+              {
+                // required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchsupplier.updateForm.remark"
+                    defaultMessage="请输入备注！"
+                  />
+                ),
+                // min: 5,
+              },
+            ]}
+          />
+      </ModalForm>
+      <UpdateForm
+        onSubmit={async (value) => {
+          const success = await handleUpdate(value);
+          if (success) {
+            handleUpdateModalOpen(false);
+            setCurrentRow(undefined);
+            if (actionRef.current) {
+              actionRef.current.reload();
+            }
+          }
+        }}
+        onCancel={() => {
+          handleUpdateModalOpen(false);
+          if (!showDetail) {
+            setCurrentRow(undefined);
+          }
+        }}
+        updateModalOpen={updateModalOpen}
+        values={currentRow || {}}
+      />
+
+      <Drawer
+        width={600}
+        open={showDetail}
+        onClose={() => {
+          setCurrentRow(undefined);
+          setShowDetail(false);
+        }}
+        closable={false}
+      >
+        {currentRow?.name && (
+          <ProDescriptions<API.RuleListItem>
+            column={2}
+            title={currentRow?.name}
+            request={async () => ({
+              data: currentRow || {},
+            })}
+            params={{
+              id: currentRow?.name,
+            }}
+            columns={columns as ProDescriptionsItemProps<API.RuleListItem>[]}
+          />
+        )}
+      </Drawer>
+    </PageContainer>
+  );
+};
+
+export default Supplier;

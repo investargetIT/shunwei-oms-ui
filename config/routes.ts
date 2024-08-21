@@ -52,6 +52,12 @@ export default [
     component: './TableList',
   },
   {
+    name: 'supplier',
+    icon: 'table',
+    path: '/supplier',
+    component: './Supplier',
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },
