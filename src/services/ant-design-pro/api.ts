@@ -6,7 +6,7 @@ import { request } from '@umijs/max';
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
     data: API.CurrentUser;
-  }>('/api/currentUser', {
+  }>('http://localhost:8000/api/currentUser', {
     method: 'GET',
     ...(options || {}),
   });
@@ -14,7 +14,7 @@ export async function currentUser(options?: { [key: string]: any }) {
 
 /** 退出登录接口 POST /api/login/outLogin */
 export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/login/outLogin', {
+  return request<Record<string, any>>('http://localhost:8000/api/login/outLogin', {
     method: 'POST',
     ...(options || {}),
   });
@@ -22,7 +22,7 @@ export async function outLogin(options?: { [key: string]: any }) {
 
 /** 登录接口 POST /api/login/account */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>('/api/login/account', {
+  return request<API.LoginResult>('http://localhost:8000/api/login/account', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export async function login(body: API.LoginParams, options?: { [key: string]: an
 
 /** 此处后端没有提供注释 GET /api/notices */
 export async function getNotices(options?: { [key: string]: any }) {
-  return request<API.NoticeIconList>('/api/notices', {
+  return request<API.NoticeIconList>('http://localhost:8000/api/notices', {
     method: 'GET',
     ...(options || {}),
   });
@@ -51,7 +51,7 @@ export async function rule(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.RuleList>('/api/rule', {
+  return request<API.RuleList>('http://localhost:8000/api/rule', {
     method: 'GET',
     params: {
       ...params,
@@ -62,7 +62,7 @@ export async function rule(
 
 /** 更新规则 PUT /api/rule */
 export async function updateRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
+  return request<API.RuleListItem>('http://localhost:8000/api/rule', {
     method: 'POST',
     data:{
       method: 'update',
@@ -73,7 +73,7 @@ export async function updateRule(options?: { [key: string]: any }) {
 
 /** 新建规则 POST /api/rule */
 export async function addRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
+  return request<API.RuleListItem>('http://localhost:8000/api/rule', {
     method: 'POST',
     data:{
       method: 'post',
@@ -84,7 +84,7 @@ export async function addRule(options?: { [key: string]: any }) {
 
 /** 删除规则 DELETE /api/rule */
 export async function removeRule(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/rule', {
+  return request<Record<string, any>>('http://localhost:8000/api/rule', {
     method: 'POST',
     data:{
       method: 'delete',
@@ -104,7 +104,7 @@ export async function suppliers(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.SuppliersList>('http://8.219.158.94:8080/suppliers', {
+  return request<API.SuppliersList>('/suppliers', {
     method: 'GET',
     params: {
       ...params,

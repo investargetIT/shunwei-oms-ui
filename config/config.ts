@@ -153,4 +153,7 @@ export default defineConfig({
   },
   esbuildMinifyIIFE: true,
   requestRecord: {},
+  define: {
+    'process.env.BASE_URL' : process.env.BASE_URL,
+  }
 });
