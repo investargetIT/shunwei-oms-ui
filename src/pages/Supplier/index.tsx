@@ -1,4 +1,4 @@
-import { addRule, removeRule, rule, updateRule } from '@/services/ant-design-pro/api';
+import { addSuppliers, removeRule, suppliers, updateRule } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
@@ -24,10 +24,10 @@ import UpdateForm from './components/UpdateForm.tsx';
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.RuleListItem) => {
+const handleAdd = async (fields: API.SuppliersListItem) => {
   const hide = message.loading('正在添加');
   try {
-    await addRule({ ...fields });
+    await addSuppliers({ ...fields });
     hide();
     message.success('Added successfully');
     return true;
@@ -69,7 +69,7 @@ const handleUpdate = async (fields: FormValueType) => {
  *
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: API.RuleListItem[]) => {
+const handleRemove = async (selectedRows: API.SuppliersListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
   try {
@@ -101,8 +101,8 @@ const Supplier: React.FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.SuppliersListItem>();
+  const [selectedRowsState, setSelectedRows] = useState<API.SuppliersListItem[]>([]);
 
   /**
    * @en-US International configuration
@@ -110,15 +110,15 @@ const Supplier: React.FC = () => {
    * */
   const intl = useIntl();
 
-  const columns: ProColumns<API.RuleListItem>[] = [
+  const columns: ProColumns<API.SuppliersListItem>[] = [
     {
       title: (
         <FormattedMessage
-          id="pages.searchsupplier.no"
+          id="pages.searchsupplier.id"
         //   defaultMessage="Rule no"
         />
       ),
-      dataIndex: 'no',
+      dataIndex: 'id',
     //   tip: 'The rule name is the unique key',
       render: (dom, entity) => {
         return (
@@ -132,6 +132,11 @@ const Supplier: React.FC = () => {
           </a>
         );
       },
+    },
+    {
+      title: <FormattedMessage id="pages.searchsupplier.code" defaultMessage="Description" />,
+      dataIndex: 'code',
+      valueType: 'textarea',
     },
     {
       title: <FormattedMessage id="pages.searchsupplier.name" defaultMessage="Description" />,
@@ -233,9 +238,9 @@ const Supplier: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.RuleListItem, API.PageParams>
+      <ProTable<API.SuppliersListItem, API.PageParams>
         headerTitle={intl.formatMessage({
-          id: 'pages.searchTable.title',
+          id: 'pages.searchsupplier.title',
           defaultMessage: 'Enquiry form',
         })}
         actionRef={actionRef}
@@ -251,10 +256,10 @@ const Supplier: React.FC = () => {
               handleModalOpen(true);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
+            <PlusOutlined /> <FormattedMessage id="pages.searchsupplier.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={rule}
+        request={suppliers}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -266,18 +271,18 @@ const Supplier: React.FC = () => {
         <FooterToolbar
           extra={
             <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
+              <FormattedMessage id="pages.searchsupplier.chosen" defaultMessage="Chosen" />{' '}
               <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
+              <FormattedMessage id="pages.searchsupplier.item" defaultMessage="项" />
               &nbsp;&nbsp;
-              <span>
+              {/* <span>
                 <FormattedMessage
                   id="pages.searchTable.totalServiceCalls"
                   defaultMessage="Total number of service calls"
                 />{' '}
                 {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)}{' '}
-                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
-              </span>
+                <FormattedMessage id="pages.searchsupplier.tenThousand" defaultMessage="万" />
+              </span> */}
             </div>
           }
         >
@@ -289,28 +294,28 @@ const Supplier: React.FC = () => {
             }}
           >
             <FormattedMessage
-              id="pages.searchTable.batchDeletion"
+              id="pages.searchsupplier.batchDeletion"
               defaultMessage="Batch deletion"
             />
           </Button>
-          <Button type="primary">
+          {/* <Button type="primary">
             <FormattedMessage
               id="pages.searchTable.batchApproval"
               defaultMessage="Batch approval"
             />
-          </Button>
+          </Button> */}
         </FooterToolbar>
       )}
       <ModalForm
         title={intl.formatMessage({
-          id: 'searchsupplier.createForm.newInfo',
-          defaultMessage: '新增信息',
+          id: 'pages.searchsupplier.createForm.newInfo',
+          defaultMessage: '新建信息',
         })}
         width="400px"
         open={createModalOpen}
         onOpenChange={handleModalOpen}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.RuleListItem);
+          const success = await handleAdd(value as API.SuppliersListItem);
           if (success) {
             handleModalOpen(false);
             if (actionRef.current) {
@@ -319,6 +324,25 @@ const Supplier: React.FC = () => {
           }
         }}
       >
+      <ProFormText
+      name="code"
+      label={intl.formatMessage({
+          id: 'pages.searchsupplier.updateForm.code',
+          defaultMessage: '编码',
+      })}
+      width="md"
+      rules={[
+          {
+          // required: true,
+          message: (
+              <FormattedMessage
+              id="pages.searchsupplier.updateForm.code"
+              defaultMessage="请输入编码！"
+              />
+          ),
+          },
+      ]}
+      />
         <ProFormText
         name="name"
         label={intl.formatMessage({
@@ -331,7 +355,7 @@ const Supplier: React.FC = () => {
             // required: true,
             message: (
                 <FormattedMessage
-                id="pages.searchTable.updateForm.name"
+                id="pages.searchsupplier.updateForm.name"
                 defaultMessage="请输入名称！"
                 />
             ),
@@ -350,7 +374,7 @@ const Supplier: React.FC = () => {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.attribute"
+                    id="pages.searchsupplier.updateForm.attribute"
                     defaultMessage="请输入属性！"
                   />
                 ),
@@ -369,7 +393,7 @@ const Supplier: React.FC = () => {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.mode"
+                    id="pages.searchsupplier.updateForm.mode"
                     defaultMessage="请输入合作模式！"
                   />
                 ),
@@ -388,7 +412,7 @@ const Supplier: React.FC = () => {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.hotel"
+                    id="pages.searchsupplier.updateForm.hotel"
                     defaultMessage="请输入销售范围（酒店）！"
                   />
                 ),
@@ -398,7 +422,7 @@ const Supplier: React.FC = () => {
           <ProFormSelect
             name="status"
             label={intl.formatMessage({
-              id: 'pages.searchTable.updateForm.status',
+              id: 'pages.searchsupplier.updateForm.status',
               defaultMessage: '合作状态',
             })}
             width="md"
@@ -420,7 +444,7 @@ const Supplier: React.FC = () => {
             // required: true,
             message: (
                 <FormattedMessage
-                id="pages.searchTable.updateForm.bank_account"
+                id="pages.searchsupplier.updateForm.bank_account"
                 defaultMessage="请输入银行账户！"
                 />
             ),
@@ -439,7 +463,7 @@ const Supplier: React.FC = () => {
             // required: true,
             message: (
                 <FormattedMessage
-                id="pages.searchTable.updateForm.case"
+                id="pages.searchsupplier.updateForm.case"
                 defaultMessage="请输入合作案例"
                 />
             ),
@@ -458,7 +482,7 @@ const Supplier: React.FC = () => {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.contact"
+                    id="pages.searchsupplier.updateForm.contact"
                     defaultMessage="请输入联系人！"
                   />
                 ),
@@ -477,7 +501,7 @@ const Supplier: React.FC = () => {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.position"
+                    id="pages.searchsupplier.updateForm.position"
                     defaultMessage="请输入职位！"
                   />
                 ),
@@ -496,7 +520,7 @@ const Supplier: React.FC = () => {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.telephone"
+                    id="pages.searchsupplier.updateForm.telephone"
                     defaultMessage="请输入电话！"
                   />
                 ),
@@ -648,7 +672,7 @@ const Supplier: React.FC = () => {
         closable={false}
       >
         {currentRow?.name && (
-          <ProDescriptions<API.RuleListItem>
+          <ProDescriptions<API.SuppliersListItem>
             column={2}
             title={currentRow?.name}
             request={async () => ({
@@ -657,7 +681,7 @@ const Supplier: React.FC = () => {
             params={{
               id: currentRow?.name,
             }}
-            columns={columns as ProDescriptionsItemProps<API.RuleListItem>[]}
+            columns={columns as ProDescriptionsItemProps<API.SuppliersListItem>[]}
           />
         )}
       </Drawer>

@@ -98,4 +98,34 @@ declare namespace API {
     description?: string;
     type?: NoticeIconItemType;
   };
+
+  type SuppliersListItem = {
+    id?: string;
+    code?: string;
+    name?: string;
+    bank_account?: string;
+    case?: string;
+    attribute?: string;
+    mode?: string;
+    hotel?: string;
+    status?: string;
+    contact?: string;
+    position?: string;
+    telephone?: string;
+    pic?: string;
+    contract_status?: string;
+    deal_date?: string;
+    start_date?: string;
+    end_date?: string;
+    remark?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type SuppliersList = {
+    data?: SuppliersListItem[];
+    /** 列表的内容总数 */
+    total?: number;
+    success?: boolean;
+  };
 }

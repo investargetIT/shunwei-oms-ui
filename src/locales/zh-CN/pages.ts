@@ -67,7 +67,8 @@ export default {
 
   'pages.searchsupplier.operation': '操作',
   'pages.searchsupplier.edit': '编辑',
-  'pages.searchsupplier.no': '编码',
+  'pages.searchsupplier.id': 'ID',
+  'pages.searchsupplier.code': '编码',
   'pages.searchsupplier.name': '名称',
   'pages.searchsupplier.bank_account': '银行账户',
   'pages.searchsupplier.case': '合作案例',
@@ -85,10 +86,10 @@ export default {
   'pages.searchsupplier.end_date': '终止日期',
   'pages.searchsupplier.remark': '备注',
 
-  'pages.searchsupplier.createForm.newInfo': '新增信息',
+  'pages.searchsupplier.createForm.newInfo': '新建信息',
   'pages.searchsupplier.updateForm.editInfo': '编辑信息',
   'pages.searchsupplier.updateForm.basicConfig': '基本信息',
-  'pages.searchsupplier.updateForm.no': '编码',
+  'pages.searchsupplier.updateForm.code': '编码',
   'pages.searchsupplier.updateForm.name': '名称',
   'pages.searchsupplier.updateForm.bank_account': '银行账户',
   'pages.searchsupplier.updateForm.case': '合作案例',
@@ -105,4 +106,9 @@ export default {
   'pages.searchsupplier.updateForm.start_date': '生效日期',
   'pages.searchsupplier.updateForm.end_date': '终止日期',
   'pages.searchsupplier.updateForm.remark': '备注',
+  'pages.searchsupplier.title': '查询信息',
+  'pages.searchsupplier.new': '新建',
+  'pages.searchsupplier.chosen': '已选择',
+  'pages.searchsupplier.item': '项',
+  'pages.searchsupplier.batchDeletion': '批量删除',
 };

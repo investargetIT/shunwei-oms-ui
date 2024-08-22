@@ -92,3 +92,56 @@ export async function removeRule(options?: { [key: string]: any }) {
     }
   });
 }
+
+/** 获取供应商 GET /suppliers */
+export async function suppliers(
+  params: {
+    // query
+    /** 当前的页码 */
+    current?: number;
+    /** 页面的容量 */
+    pageSize?: number;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<API.SuppliersList>('http://8.219.158.94:8080/suppliers', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 更新供应商 PUT /suppliers */
+export async function updateSuppliers(options?: { [key: string]: any }) {
+  return request<API.SuppliersListItem>('/suppliers', {
+    method: 'PUT',
+    data:{
+      method: 'update',
+      ...(options || {}),
+    }
+  });
+}
+
+/** 新建供应商 POST /suppliers */
+export async function addSuppliers(options?: { [key: string]: any }) {
+  return request<API.SuppliersListItem>('/suppliers', {
+    method: 'POST',
+    data:{
+      method: 'post',
+      ...(options || {}),
+    }
+  });
+}
+
+/** 删除供应商 DELETE /suppliers/batch */
+export async function removeSuppliers(options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/suppliers/batch', {
+    method: 'POST',
+    data:{
+      method: 'delete',
+      ...(options || {}),
+    }
+  });
+}

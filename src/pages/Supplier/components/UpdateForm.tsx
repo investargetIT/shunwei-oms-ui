@@ -61,7 +61,7 @@ import {
       >
         <StepsForm.StepForm
           initialValues={{
-            no: props.values.no,
+            code: props.values.code,
             name: props.values.name,
             bank_account: props.values.bank_account,
             case: props.values.case,
@@ -72,11 +72,11 @@ import {
           })}
         >
           <ProFormText
-            name="no"
+            name="code"
             // readonly
             disabled
             label={intl.formatMessage({
-              id: 'pages.searchsupplier.updateForm.no',
+              id: 'pages.searchsupplier.updateForm.code',
               defaultMessage: '编码',
             })}
             width="md"
@@ -93,7 +93,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.name"
+                    id="pages.searchsupplier.updateForm.name"
                     defaultMessage="请输入名称！"
                   />
                 ),
@@ -112,7 +112,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.bank_account"
+                    id="pages.searchsupplier.updateForm.bank_account"
                     defaultMessage="请输入银行账户！"
                   />
                 ),
@@ -131,7 +131,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.case"
+                    id="pages.searchsupplier.updateForm.case"
                     defaultMessage="请输入合作案例！"
                   />
                 ),
@@ -164,7 +164,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.attribute"
+                    id="pages.searchsupplier.updateForm.attribute"
                     defaultMessage="请输入属性！"
                   />
                 ),
@@ -183,7 +183,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.mode"
+                    id="pages.searchsupplier.updateForm.mode"
                     defaultMessage="请输入合作模式！"
                   />
                 ),
@@ -202,7 +202,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.hotel"
+                    id="pages.searchsupplier.updateForm.hotel"
                     defaultMessage="请输入销售范围（酒店）！"
                   />
                 ),
@@ -212,7 +212,7 @@ import {
           <ProFormSelect
             name="status"
             label={intl.formatMessage({
-              id: 'pages.searchTable.updateForm.status',
+              id: 'pages.searchsupplier.updateForm.status',
               defaultMessage: '合作状态',
             })}
             width="md"
@@ -248,7 +248,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.contact"
+                    id="pages.searchsupplier.updateForm.contact"
                     defaultMessage="请输入联系人！"
                   />
                 ),
@@ -267,7 +267,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.position"
+                    id="pages.searchsupplier.updateForm.position"
                     defaultMessage="请输入职位！"
                   />
                 ),
@@ -286,7 +286,7 @@ import {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchTable.updateForm.telephone"
+                    id="pages.searchsupplier.updateForm.telephone"
                     defaultMessage="请输入电话！"
                   />
                 ),
