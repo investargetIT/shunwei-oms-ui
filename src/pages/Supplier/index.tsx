@@ -1,4 +1,4 @@
-import { addSuppliers, removeRule, suppliers, updateRule } from '@/services/ant-design-pro/api';
+import { addSuppliers, removeSuppliers, suppliers, updateSuppliers } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
@@ -11,7 +11,7 @@ import {
   ProTable,
   StepsForm,
   ProFormSelect,
-  ProFormDatePicker
+  ProFormDatePicker,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { Button, Drawer, Input, message } from 'antd';
@@ -46,14 +46,30 @@ const handleAdd = async (fields: API.SuppliersListItem) => {
  */
 const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('Configuring');
+  const id  = fields.id;
+  const values = {
+    id: fields.id,
+    code: fields.code,
+    name: fields.name,
+    bankAccount: fields.bankAccount,
+    partnershipCase: fields.partnershipCase,
+    attribute: fields.attribute,
+    mode: fields.mode,
+    hotel: fields.hotel,
+    status: fields.status,
+    contact: fields.contact,
+    position: fields.position,
+    telephone: fields.telephone,
+    salesman: fields.salesman,
+    contractStatus: fields.contractStatus,
+    dealDate: fields.dealDate,
+    startDate: fields.startDate,
+    endDate: fields.endDate,
+    remark: fields.remark,
+  }
   try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
+    await updateSuppliers(id, values);
     hide();
-
     message.success('Configuration is successful');
     return true;
   } catch (error) {
@@ -62,6 +78,8 @@ const handleUpdate = async (fields: FormValueType) => {
     return false;
   }
 };
+
+
 
 /**
  *  Delete node
@@ -72,10 +90,9 @@ const handleUpdate = async (fields: FormValueType) => {
 const handleRemove = async (selectedRows: API.SuppliersListItem[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
+  const id  = selectedRows.map((row) => row.id);
   try {
-    await removeRule({
-      key: selectedRows.map((row) => row.key),
-    });
+    await removeSuppliers(id);
     hide();
     message.success('Deleted successfully and will refresh soon');
     return true;
@@ -144,13 +161,13 @@ const Supplier: React.FC = () => {
       valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchsupplier.bank_account" defaultMessage="Description" />,
-        dataIndex: 'bank_account',
+        title: <FormattedMessage id="pages.searchsupplier.bankAccount" defaultMessage="Description" />,
+        dataIndex: 'bankAccount',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchsupplier.case" defaultMessage="Description" />,
-        dataIndex: 'case',
+        title: <FormattedMessage id="pages.searchsupplier.partnershipCase" defaultMessage="Description" />,
+        dataIndex: 'partnershipCase',
         valueType: 'textarea',
     },
     {
@@ -189,29 +206,32 @@ const Supplier: React.FC = () => {
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchsupplier.pic" defaultMessage="Description" />,
-        dataIndex: 'pic',
+        title: <FormattedMessage id="pages.searchsupplier.salesman" defaultMessage="Description" />,
+        dataIndex: 'salesman',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchsupplier.contract_status" defaultMessage="Description" />,
-        dataIndex: 'contract_status',
+        title: <FormattedMessage id="pages.searchsupplier.contractStatus" defaultMessage="Description" />,
+        dataIndex: 'contractStatus',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchsupplier.deal_date" defaultMessage="Description" />,
-        dataIndex: 'deal_date',
-        valueType: 'textarea',
+        title: <FormattedMessage id="pages.searchsupplier.dealDate" defaultMessage="Description" />,
+        dataIndex: 'dealDate',
+        sorter: true,
+        valueType: 'date',
     },
     {
-        title: <FormattedMessage id="pages.searchsupplier.start_date" defaultMessage="Description" />,
-        dataIndex: 'start_date',
-        valueType: 'textarea',
+        title: <FormattedMessage id="pages.searchsupplier.startDate" defaultMessage="Description" />,
+        dataIndex: 'startDate',
+        sorter: true,
+        valueType: 'date',
     },
     {
-        title: <FormattedMessage id="pages.searchsupplier.end_date" defaultMessage="Description" />,
-        dataIndex: 'end_date',
-        valueType: 'textarea',
+        title: <FormattedMessage id="pages.searchsupplier.endDate" defaultMessage="Description" />,
+        dataIndex: 'endDate',
+        sorter: true,
+        valueType: 'date',
     },
     {
         title: <FormattedMessage id="pages.searchsupplier.remark" defaultMessage="Description" />,
@@ -244,7 +264,7 @@ const Supplier: React.FC = () => {
           defaultMessage: 'Enquiry form',
         })}
         actionRef={actionRef}
-        rowKey="key"
+        rowKey="id"
         search={{
           labelWidth: 120,
         }}
@@ -274,8 +294,8 @@ const Supplier: React.FC = () => {
               <FormattedMessage id="pages.searchsupplier.chosen" defaultMessage="Chosen" />{' '}
               <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
               <FormattedMessage id="pages.searchsupplier.item" defaultMessage="项" />
-              &nbsp;&nbsp;
-              {/* <span>
+              {/* &nbsp;&nbsp;
+              <span>
                 <FormattedMessage
                   id="pages.searchTable.totalServiceCalls"
                   defaultMessage="Total number of service calls"
@@ -363,6 +383,44 @@ const Supplier: React.FC = () => {
         ]}
         />
         <ProFormText
+        name="bankAccount"
+        label={intl.formatMessage({
+            id: 'pages.searchsupplier.updateForm.bankAccount',
+            defaultMessage: '银行账户',
+        })}
+        width="md"
+        rules={[
+            {
+            // required: true,
+            message: (
+                <FormattedMessage
+                id="pages.searchsupplier.updateForm.bankAccount"
+                defaultMessage="请输入银行账户！"
+                />
+            ),
+            },
+        ]}
+        />
+        <ProFormText
+        name="partnershipCase"
+        label={intl.formatMessage({
+            id: 'pages.searchsupplier.updateForm.partnershipCase',
+            defaultMessage: '合作案例',
+        })}
+        width="md"
+        rules={[
+            {
+            // required: true,
+            message: (
+                <FormattedMessage
+                id="pages.searchsupplier.updateForm.partnershipCase"
+                defaultMessage="请输入合作案例"
+                />
+            ),
+            },
+        ]}
+        />
+        <ProFormText
             name="attribute"
             label={intl.formatMessage({
               id: 'pages.searchsupplier.updateForm.attribute',
@@ -433,44 +491,6 @@ const Supplier: React.FC = () => {
             }}
           />
         <ProFormText
-        name="bank_account"
-        label={intl.formatMessage({
-            id: 'pages.searchsupplier.updateForm.bank_account',
-            defaultMessage: '银行账户',
-        })}
-        width="md"
-        rules={[
-            {
-            // required: true,
-            message: (
-                <FormattedMessage
-                id="pages.searchsupplier.updateForm.bank_account"
-                defaultMessage="请输入银行账户！"
-                />
-            ),
-            },
-        ]}
-        />
-        <ProFormText
-        name="case"
-        label={intl.formatMessage({
-            id: 'pages.searchsupplier.updateForm.case',
-            defaultMessage: '合作案例',
-        })}
-        width="md"
-        rules={[
-            {
-            // required: true,
-            message: (
-                <FormattedMessage
-                id="pages.searchsupplier.updateForm.case"
-                defaultMessage="请输入合作案例"
-                />
-            ),
-            },
-        ]}
-        />
-        <ProFormText
             name="contact"
             label={intl.formatMessage({
               id: 'pages.searchsupplier.updateForm.contact',
@@ -528,9 +548,9 @@ const Supplier: React.FC = () => {
             ]}
           />
           <ProFormText
-            name="pic"
+            name="salesman"
             label={intl.formatMessage({
-              id: 'pages.searchsupplier.updateForm.pic',
+              id: 'pages.searchsupplier.updateForm.salesman',
               defaultMessage: '对接人',
             })}
             width="md"
@@ -539,7 +559,7 @@ const Supplier: React.FC = () => {
                 // required: true,
                 message: (
                   <FormattedMessage
-                    id="pages.searchsupplier.updateForm.pic"
+                    id="pages.searchsupplier.updateForm.salesman"
                     defaultMessage="请输入对接人！"
                   />
                 ),
@@ -547,9 +567,9 @@ const Supplier: React.FC = () => {
             ]}
           />
           <ProFormSelect
-            name="contract_status"
+            name="contractStatus"
             label={intl.formatMessage({
-              id: 'pages.searchsupplier.updateForm.contract_status',
+              id: 'pages.searchsupplier.updateForm.contractStatus',
               defaultMessage: '合同状态',
             })}
             width="md"
@@ -560,61 +580,58 @@ const Supplier: React.FC = () => {
             }}
           />
           <ProFormDatePicker
-            name="deal_date"
+            name="dealDate"
             width="md"
             label={intl.formatMessage({
-              id: 'pages.searchsupplier.updateForm.deal_date',
+              id: 'pages.searchsupplier.updateForm.dealDate',
               defaultMessage: '签订日期',
             })}
-            rules={[
-              {
-                // required: true,
-                message: (
-                  <FormattedMessage
-                    id="pages.searchsupplier.updateForm.deal_date"
-                    defaultMessage="请选择签订日期！"
-                  />
-                ),
-              },
-            ]}
+            // rules={[
+            //   {
+            //     message: (
+            //       <FormattedMessage
+            //         id="pages.searchsupplier.updateForm.dealDate"
+            //         defaultMessage="请选择签订日期！"
+            //       />
+            //     ),
+            //   },
+            // ]}
           />
           <ProFormDatePicker
-            name="start_date"
+            name="startDate"
             width="md"
             label={intl.formatMessage({
-              id: 'pages.searchsupplier.updateForm.start_date',
+              id: 'pages.searchsupplier.updateForm.startDate',
               defaultMessage: '生效日期',
             })}
-            rules={[
-              {
-                // required: true,
-                message: (
-                  <FormattedMessage
-                    id="pages.searchsupplier.updateForm.start_date"
-                    defaultMessage="请选择生效日期！"
-                  />
-                ),
-              },
-            ]}
+            // rules={[
+            //   {
+            //     message: (
+            //       <FormattedMessage
+            //         id="pages.searchsupplier.updateForm.startDate"
+            //         defaultMessage="请选择生效日期！"
+            //       />
+            //     ),
+            //   },
+            // ]}
           />
           <ProFormDatePicker
-            name="end_date"
+            name="endDate"
             width="md"
             label={intl.formatMessage({
-              id: 'pages.searchsupplier.updateForm.end_date',
+              id: 'pages.searchsupplier.updateForm.endDate',
               defaultMessage: '终止日期',
             })}
-            rules={[
-              {
-                // required: true,
-                message: (
-                  <FormattedMessage
-                    id="pages.searchsupplier.updateForm.end_date"
-                    defaultMessage="请选择终止日期！"
-                  />
-                ),
-              },
-            ]}
+            // rules={[
+            //   {
+            //     message: (
+            //       <FormattedMessage
+            //         id="pages.searchsupplier.updateForm.endDate"
+            //         defaultMessage="请选择终止日期！"
+            //       />
+            //     ),
+            //   },
+            // ]}
           />
           <ProFormTextArea
             name="remark"

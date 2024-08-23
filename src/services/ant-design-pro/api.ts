@@ -104,7 +104,7 @@ export async function suppliers(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.SuppliersList>('/suppliers', {
+  return request<API.SuppliersList>('http://14.103.115.96:8080/suppliers', {
     method: 'GET',
     params: {
       ...params,
@@ -114,34 +114,56 @@ export async function suppliers(
 }
 
 /** 更新供应商 PUT /suppliers */
-export async function updateSuppliers(options?: { [key: string]: any }) {
-  return request<API.SuppliersListItem>('/suppliers', {
-    method: 'PUT',
-    data:{
-      method: 'update',
-      ...(options || {}),
-    }
-  });
+// export async function updateSuppliers(id: string, options?: { [key: string]: any }) {
+//   return request<API.SuppliersListItem>(`http://14.103.115.96:8080/suppliers/${id}`, {
+//     method: 'PUT',
+//     data: {
+//       ...(options || {}),
+//     },
+//   });
+// }
+
+export async function updateSuppliers(id: string, data: any) {
+  try {
+    const response = await request<API.SuppliersListItem>(`http://14.103.115.96:8080/suppliers/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+      data,
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to update supplier:', error);
+    throw error;
+  }
 }
+
 
 /** 新建供应商 POST /suppliers */
 export async function addSuppliers(options?: { [key: string]: any }) {
-  return request<API.SuppliersListItem>('/suppliers', {
+  return request<API.SuppliersListItem>('http://14.103.115.96:8080/suppliers', {
     method: 'POST',
     data:{
-      method: 'post',
       ...(options || {}),
     }
   });
 }
 
 /** 删除供应商 DELETE /suppliers/batch */
-export async function removeSuppliers(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/suppliers/batch', {
-    method: 'POST',
-    data:{
-      method: 'delete',
-      ...(options || {}),
-    }
-  });
+export async function removeSuppliers(id: string) {
+  try {
+    const response = await request<API.SuppliersListItem>(`http://14.103.115.96:8080/suppliers/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to update supplier:', error);
+    throw error;
+  }
 }

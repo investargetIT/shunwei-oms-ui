@@ -103,8 +103,8 @@ declare namespace API {
     id?: string;
     code?: string;
     name?: string;
-    bank_account?: string;
-    case?: string;
+    bankAccount?: string;
+    partnershipCase?: string;
     attribute?: string;
     mode?: string;
     hotel?: string;
@@ -112,11 +112,11 @@ declare namespace API {
     contact?: string;
     position?: string;
     telephone?: string;
-    pic?: string;
-    contract_status?: string;
-    deal_date?: string;
-    start_date?: string;
-    end_date?: string;
+    salesman?: string;
+    contractStatus?: string;
+    dealDate?: string;
+    startDate?: string;
+    endDate?: string;
     remark?: string;
     createdAt?: string;
     updatedAt?: string;
