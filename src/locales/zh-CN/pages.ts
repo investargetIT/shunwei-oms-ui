@@ -85,7 +85,6 @@ export default {
   'pages.searchsupplier.start_date': '生效日期',
   'pages.searchsupplier.end_date': '终止日期',
   'pages.searchsupplier.remark': '备注',
-
   'pages.searchsupplier.createForm.newInfo': '新建信息',
   'pages.searchsupplier.updateForm.editInfo': '编辑信息',
   'pages.searchsupplier.updateForm.basicConfig': '基本信息',
@@ -111,4 +110,28 @@ export default {
   'pages.searchsupplier.chosen': '已选择',
   'pages.searchsupplier.item': '项',
   'pages.searchsupplier.batchDeletion': '批量删除',
+
+
+
+  
+  'pages.searchclient.createForm.newInfo': '新建信息',
+  'pages.searchclient.updateForm.editInfo': '编辑信息',
+  'pages.searchclient.updateForm.basicConfig': '基本信息',
+  'pages.searchclient.title': '查询信息',
+  'pages.searchclient.new': '新建',
+  'pages.searchclient.chosen': '已选择',
+  'pages.searchclient.item': '项',
+  'pages.searchclient.batchDeletion': '批量删除',
+  'pages.searchclient.operation': '操作',
+  'pages.searchclient.edit': '编辑',
+  'pages.searchclient.id': 'ID',
+  'pages.searchclient.code': '编码',
+  'pages.searchclient.name': '名称',
+  'pages.searchclient.address': '地址',
+  'pages.searchclient.contact': '联系人',
+  'pages.searchclient.telephone': '联系电话',
+  'pages.searchclient.status': '状态',
+  'pages.searchclient.brand': '品牌',
+  'pages.searchclient.attribute': '性质',
+  'pages.searchclient.remark': '备注',
 };

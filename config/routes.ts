@@ -58,6 +58,12 @@ export default [
     component: './Supplier',
   },
   {
+    name: 'client',
+    icon: 'table',
+    path: '/client',
+    component: './Client',
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },

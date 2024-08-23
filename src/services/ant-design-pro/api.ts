@@ -104,7 +104,7 @@ export async function suppliers(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.SuppliersList>('http://8.219.158.94:8080/suppliers', {
+  return request<API.SuppliersList>('/suppliers', {
     method: 'GET',
     params: {
       ...params,

@@ -128,4 +128,26 @@ declare namespace API {
     total?: number;
     success?: boolean;
   };
+
+  type ClientListItem = {
+    id?: string;
+    code?: string;
+    name?: string;
+    address?: string;
+    contact?: string;
+    telephone?: string;
+    status?: string;
+    brand?: string;
+    attribute?: string;
+    remark?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type ClientList = {
+    data?: ClientListItem[];
+    /** 列表的内容总数 */
+    total?: number;
+    success?: boolean;
+  };
 }
