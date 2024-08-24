@@ -173,7 +173,12 @@ const Supplier: React.FC = () => {
     {
         title: <FormattedMessage id="pages.searchsupplier.status" defaultMessage="Description" />,
         dataIndex: 'status',
-        valueType: 'textarea',
+        valueType: 'select',
+        valueEnum: {
+          '确认合作': { text: '确认合作' },
+          '暂停合作': { text: '暂停合作' },
+          '终止合作': { text: '终止合作' },
+        },
     },
     {
         title: <FormattedMessage id="pages.searchsupplier.contact" defaultMessage="Description" />,
@@ -198,7 +203,12 @@ const Supplier: React.FC = () => {
     {
         title: <FormattedMessage id="pages.searchsupplier.contractStatus" defaultMessage="Description" />,
         dataIndex: 'contractStatus',
-        valueType: 'textarea',
+        valueType: 'select',
+        valueEnum: {
+          '确认': { text: '确认' },
+          '暂停': { text: '暂停' },
+          '终止': { text: '终止' },
+        },
     },
     {
         title: <FormattedMessage id="pages.searchsupplier.dealDate" defaultMessage="Description" />,

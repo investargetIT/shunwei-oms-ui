@@ -127,7 +127,7 @@ export async function suppliers(params: API.PageParams) {
 
     return {
       data: response.data.content,
-      total: response.data.total,
+      total: response.data.totalElements,
       success: true,
     };
   } catch (error) {
