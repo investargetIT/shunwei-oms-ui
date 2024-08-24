@@ -67,6 +67,7 @@ export default {
 
   'pages.searchsupplier.operation': '操作',
   'pages.searchsupplier.edit': '编辑',
+  'pages.searchsupplier.details': '详情',
   'pages.searchsupplier.id': 'ID',
   'pages.searchsupplier.code': '编码',
   'pages.searchsupplier.name': '名称',

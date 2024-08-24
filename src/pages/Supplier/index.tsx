@@ -129,26 +129,9 @@ const Supplier: React.FC = () => {
 
   const columns: ProColumns<API.SuppliersListItem>[] = [
     {
-      title: (
-        <FormattedMessage
-          id="pages.searchsupplier.id"
-        //   defaultMessage="Rule no"
-        />
-      ),
+      title: <FormattedMessage id="pages.searchsupplier.id" defaultMessage="Description" />,
       dataIndex: 'id',
-    //   tip: 'The rule name is the unique key',
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
+      valueType: 'textarea',
     },
     {
       title: <FormattedMessage id="pages.searchsupplier.code" defaultMessage="Description" />,
@@ -254,6 +237,28 @@ const Supplier: React.FC = () => {
         </a>,
       ],
     },
+    {
+      title: (
+        <FormattedMessage
+          id="pages.searchsupplier.operation"
+        />
+      ),
+      dataIndex: 'id',
+      valueType: 'option',
+    //   tip: 'The rule name is the unique key',
+      render: (dom, entity) => {
+        return (
+          <a
+            onClick={() => {
+              setCurrentRow(entity);
+              setShowDetail(true);
+            }}
+          >
+            <FormattedMessage id="pages.searchsupplier.details" defaultMessage="Configuration" />
+          </a>
+        );
+      },
+    },
   ];
 
   return (
@@ -268,6 +273,7 @@ const Supplier: React.FC = () => {
         search={{
           labelWidth: 120,
         }}
+        scroll={{ x: 'max-content' }}
         toolBarRender={() => [
           <Button
             type="primary"

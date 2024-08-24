@@ -104,7 +104,7 @@ export async function suppliers(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.SuppliersList>('http://14.103.115.96:8080/suppliers', {
+  return request<API.SuppliersList>('/suppliers', {
     method: 'GET',
     params: {
       ...params,
@@ -114,18 +114,9 @@ export async function suppliers(
 }
 
 /** 更新供应商 PUT /suppliers */
-// export async function updateSuppliers(id: string, options?: { [key: string]: any }) {
-//   return request<API.SuppliersListItem>(`http://14.103.115.96:8080/suppliers/${id}`, {
-//     method: 'PUT',
-//     data: {
-//       ...(options || {}),
-//     },
-//   });
-// }
-
 export async function updateSuppliers(id: string, data: any) {
   try {
-    const response = await request<API.SuppliersListItem>(`http://14.103.115.96:8080/suppliers/${id}`, {
+    const response = await request<API.SuppliersListItem>(`/suppliers/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -143,7 +134,7 @@ export async function updateSuppliers(id: string, data: any) {
 
 /** 新建供应商 POST /suppliers */
 export async function addSuppliers(options?: { [key: string]: any }) {
-  return request<API.SuppliersListItem>('http://14.103.115.96:8080/suppliers', {
+  return request<API.SuppliersListItem>('/suppliers', {
     method: 'POST',
     data:{
       ...(options || {}),
@@ -154,7 +145,7 @@ export async function addSuppliers(options?: { [key: string]: any }) {
 /** 删除供应商 DELETE /suppliers/batch */
 export async function removeSuppliers(id: string) {
   try {
-    const response = await request<API.SuppliersListItem>(`http://14.103.115.96:8080/suppliers/${id}`, {
+    const response = await request<API.SuppliersListItem>(`/suppliers/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
