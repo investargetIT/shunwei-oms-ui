@@ -129,11 +129,6 @@ const Supplier: React.FC = () => {
 
   const columns: ProColumns<API.SuppliersListItem>[] = [
     {
-      title: <FormattedMessage id="pages.searchsupplier.id" defaultMessage="Description" />,
-      dataIndex: 'id',
-      valueType: 'textarea',
-    },
-    {
       title: <FormattedMessage id="pages.searchsupplier.code" defaultMessage="Description" />,
       dataIndex: 'code',
       valueType: 'textarea',
