@@ -14,11 +14,10 @@ import {
   ProFormDatePicker,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
-import { Button, Drawer, Input, message } from 'antd';
+import { Button, Drawer, Input, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm.tsx';
 import UpdateForm from './components/UpdateForm.tsx';
-
 /**
  * @en-US Add node
  * @zh-CN 添加节点
@@ -88,19 +87,27 @@ const handleUpdate = async (fields: FormValueType) => {
  * @param selectedRows
  */
 const handleRemove = async (selectedRows: API.SuppliersListItem[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  const id  = selectedRows.map((row) => row.id);
-  try {
-    await removeSuppliers(id);
-    hide();
-    message.success('Deleted successfully and will refresh soon');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Delete failed, please try again');
-    return false;
-  }
+  Modal.confirm({
+    title: <FormattedMessage id="pages.searchsupplier.deleteConfirmTitle" defaultMessage="确认删除" />,
+    content: <FormattedMessage id="pages.searchsupplier.deleteConfirmContent" defaultMessage="确定要删除吗？" />,
+    okText: <FormattedMessage id="pages.searchsupplier.deleteConfirmOk" defaultMessage="确认删除" />,
+    cancelText: <FormattedMessage id="pages.searchsupplier.deleteConfirmCancel" defaultMessage="取消" />,
+    onOk: async () => {
+      const hide = message.loading('正在删除');
+      if (!selectedRows) return true;
+      const ids = selectedRows.map((row) => row.id);
+      try {
+        await removeSuppliers(ids);
+        hide();
+        message.success('Deleted successfully and will refresh soon');
+        return true;
+      } catch (error) {
+        hide();
+        message.error('Delete failed, please try again');
+        return false;
+      }
+    }
+  });
 };
 
 const Supplier: React.FC = () => {
@@ -230,29 +237,15 @@ const Supplier: React.FC = () => {
         >
           <FormattedMessage id="pages.searchsupplier.edit" defaultMessage="Configuration" />
         </a>,
+        <a
+        onClick={() => {
+          setCurrentRow(record);
+          setShowDetail(true);
+        }}
+      >
+        <FormattedMessage id="pages.searchsupplier.details" defaultMessage="Configuration" />
+      </a>
       ],
-    },
-    {
-      title: (
-        <FormattedMessage
-          id="pages.searchsupplier.operation"
-        />
-      ),
-      dataIndex: 'id',
-      valueType: 'option',
-    //   tip: 'The rule name is the unique key',
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            <FormattedMessage id="pages.searchsupplier.details" defaultMessage="Configuration" />
-          </a>
-        );
-      },
     },
   ];
 
@@ -486,9 +479,9 @@ const Supplier: React.FC = () => {
             })}
             width="md"
             valueEnum={{
-              0: '确认合作',
-              1: '暂停合作',
-              2: '终止合作',
+              '确认合作': '确认合作',
+              '暂停合作': '暂停合作',
+              '终止合作': '终止合作',
             }}
           />
         <ProFormText
@@ -575,9 +568,9 @@ const Supplier: React.FC = () => {
             })}
             width="md"
             valueEnum={{
-              0: '确认',
-              1: '暂停',
-              2: '终止',
+              '确认': '确认',
+              '暂停': '暂停',
+              '终止': '终止',
             }}
           />
           <ProFormDatePicker

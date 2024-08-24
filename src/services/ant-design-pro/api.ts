@@ -94,23 +94,49 @@ export async function removeRule(options?: { [key: string]: any }) {
 }
 
 /** 获取供应商 GET /suppliers */
-export async function suppliers(
-  params: {
-    // query
-    /** 当前的页码 */
-    current?: number;
-    /** 页面的容量 */
-    pageSize?: number;
-  },
-  options?: { [key: string]: any },
-) {
-  return request<API.SuppliersList>('/suppliers', {
-    method: 'GET',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+// export async function suppliers(
+//   params: {
+//     // query
+//     /** 当前的页码 */
+//     current?: number;
+//     /** 页面的容量 */
+//     pageSize?: number;
+//   },
+//   options?: { [key: string]: any },
+// ) {
+//   return request<API.SuppliersList>('/suppliers', {
+//     method: 'GET',
+//     params: {
+//       ...params,
+//     },
+//     ...(options || {}),
+//   });
+// }
+export async function suppliers(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+
+  try {
+    const response = await request('/suppliers/search', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,   // Map to 'page'
+        size: pageSize,  // Map to 'size'
+      },
+    });
+
+    return {
+      data: response.data.content,
+      total: response.data.total,
+      success: true,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
 }
 
 /** 更新供应商 PUT /suppliers */
@@ -143,10 +169,11 @@ export async function addSuppliers(options?: { [key: string]: any }) {
 }
 
 /** 删除供应商 DELETE /suppliers/batch */
-export async function removeSuppliers(id: string) {
+export async function removeSuppliers(ids: any) {
   try {
-    const response = await request<API.SuppliersListItem>(`/suppliers/${id}`, {
+    const response = await request<API.SuppliersListItem>(`/suppliers/batch`, {
       method: 'DELETE',
+      data: {ids},
       headers: {
         'Content-Type': 'application/json',
         // 如果需要认证 token，请在 headers 中添加
