@@ -290,6 +290,7 @@ const Supplier: React.FC = () => {
             setSelectedRows(selectedRows);
           },
         }}
+        pagination={{ showSizeChanger: true, showQuickJumper: true }}
       />
       {selectedRowsState?.length > 0 && (
         <FooterToolbar
