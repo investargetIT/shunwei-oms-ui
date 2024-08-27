@@ -129,6 +129,36 @@ declare namespace API {
     success?: boolean;
   };
 
+  type GoodsListItem = {
+    id?: string;
+    internalCode?: string;
+    externalCode?: string;
+    name?: string;
+    category?: string;
+    picture?: string;
+    brand?: string;
+    details?: string;
+    usageLocation?: string;
+    unit?: string;
+    boxStandards?: string;
+    costPrice?: string;
+    sellingPrice?: string;
+    grossMargin?: string;
+    supplierId?: string;
+    leadTime?: string;
+    moq?: string;
+    remark?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type GoodsList = {
+    data?: GoodsListItem[];
+    /** 列表的内容总数 */
+    total?: number;
+    success?: boolean;
+  };
+
   type ClientListItem = {
     id?: string;
     code?: string;

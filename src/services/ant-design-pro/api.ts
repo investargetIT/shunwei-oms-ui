@@ -6,7 +6,7 @@ import { request } from '@umijs/max';
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
     data: API.CurrentUser;
-  }>('/api/currentUser', {
+  }>('http://localhost:8000/api/currentUser', {
     method: 'GET',
     ...(options || {}),
   });
@@ -22,7 +22,7 @@ export async function outLogin(options?: { [key: string]: any }) {
 
 /** 登录接口 POST /api/login/account */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>('/api/login/account', {
+  return request<API.LoginResult>('http://localhost:8000/api/login/account', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -93,28 +93,9 @@ export async function removeRule(options?: { [key: string]: any }) {
   });
 }
 
-/** 获取供应商 GET /suppliers */
-// export async function suppliers(
-//   params: {
-//     // query
-//     /** 当前的页码 */
-//     current?: number;
-//     /** 页面的容量 */
-//     pageSize?: number;
-//   },
-//   options?: { [key: string]: any },
-// ) {
-//   return request<API.SuppliersList>('/suppliers', {
-//     method: 'GET',
-//     params: {
-//       ...params,
-//     },
-//     ...(options || {}),
-//   });
-// }
+/** 获取供应商 GET /suppliers/search */
 export async function suppliers(params: API.PageParams) {
   const { current, pageSize, ...restParams } = params;
-
   try {
     const response = await request('/suppliers/search', {
       method: 'GET',
@@ -182,6 +163,80 @@ export async function removeSuppliers(ids: any) {
     return response;
   } catch (error) {
     console.error('Failed to update supplier:', error);
+    throw error;
+  }
+}
+
+/** 获取供应商 GET /goods/search */
+export async function goods(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+  try {
+    const response = await request('/goods/search', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,   // Map to 'page'
+        size: pageSize,  // Map to 'size'
+      },
+    });
+
+    return {
+      data: response.data.content,
+      total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
+/** 更新供应商 PUT /goods */
+export async function updateGoods(id: string, data: any) {
+  try {
+    const response = await request<API.GoodsListItem>(`/goods/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+      data,
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to update goods:', error);
+    throw error;
+  }
+}
+
+
+/** 新建供应商 POST /goods */
+export async function addGoods(options?: { [key: string]: any }) {
+  return request<API.GoodsListItem>('/goods', {
+    method: 'POST',
+    data:{
+      ...(options || {}),
+    }
+  });
+}
+
+/** 删除供应商 DELETE /goods/batch */
+export async function removeGoods(ids: any) {
+  try {
+    const response = await request<API.GoodsListItem>(`/goods/batch`, {
+      method: 'DELETE',
+      data: {ids},
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to delete goods:', error);
     throw error;
   }
 }

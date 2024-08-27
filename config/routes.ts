@@ -57,6 +57,12 @@ export default [
     path: '/supplier',
     component: './Supplier',
   },
+  {
+    name: 'goods',
+    icon: 'table',
+    path: '/goods',
+    component: './Goods',
+  },
   // {
   //   name: 'client',
   //   icon: 'table',
