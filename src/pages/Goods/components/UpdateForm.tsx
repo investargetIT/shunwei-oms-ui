@@ -1,4 +1,5 @@
-import {
+  import { fetchSuppliers } from '@/services/ant-design-pro/api';
+  import {
     ProFormDateTimePicker,
     ProFormDatePicker,
     DatePicker,
@@ -9,8 +10,8 @@ import {
     StepsForm,
   } from '@ant-design/pro-components';
   import { FormattedMessage, useIntl } from '@umijs/max';
-  import { Modal } from 'antd';
-  import React from 'react';
+  import { Modal,Input } from 'antd';
+  import React, {useEffect, useState } from 'react';
   
   export type FormValueType = {
     id?: string;
@@ -41,6 +42,50 @@ import {
   };
   
   const UpdateForm: React.FC<UpdateFormProps> = (props) => {
+    const [supplierOptions, setSupplierOptions] = useState([]);
+    const [filteredOptions, setFilteredOptions] = useState([]);
+    const [searchValue, setSearchValue] = useState('');
+    // 从 props 中提取数据
+    const { supplier, leadTime, moq, remark } = props.values;
+
+    // 提取 supplier 对象中的 id 和 name
+    const supplierId = supplier?.id;
+    const supplierName = supplier?.name;
+
+    // 初始化表单的默认值
+    const initialValues = {
+      supplierId: supplierId, // 默认选中的供应商 ID
+      supplierName: supplierName, // 默认显示的供应商名称（只读）
+      leadTime: leadTime,
+      moq: moq,
+      remark: remark,
+    };
+  
+    useEffect(() => {
+      // Fetch suppliers initially
+      const loadSuppliers = async () => {
+        const { data, success } = await fetchSuppliers({ current: 1, pageSize: 1000 }); // Adjust pageSize as needed
+        if (success) {
+          const options = data.map(supplier => ({
+            label: supplier.name,
+            value: supplier.id, // Ensure this is a number
+          }));
+          setSupplierOptions(options);
+          setFilteredOptions(options); // Initialize filtered options
+        }
+      };
+  
+      loadSuppliers();
+    }, []);
+  
+    useEffect(() => {
+      // Filter suppliers based on search value
+      const filterOptions = supplierOptions.filter(option =>
+        option.label.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setFilteredOptions(filterOptions);
+    }, [searchValue, supplierOptions]);
+    
     const intl = useIntl();
     return (
       <StepsForm
@@ -408,31 +453,36 @@ import {
           />
         </StepsForm.StepForm>
         <StepsForm.StepForm
-          initialValues={{
-            supplierId: props.values.supplierId,
-            leadTime: props.values.leadTime,
-            moq: props.values.moq,
-            remark: props.values.remark,
-          }}
+          initialValues={initialValues}
           title={intl.formatMessage({
             id: 'pages.searchgoods.updateForm.basicConfig',
             defaultMessage: '基本信息',
           })}
         >
-        <ProFormText
-          name="supplierId"
-          label={intl.formatMessage({
-            id: 'pages.searchgoods.supplierId',
-            defaultMessage: '供应商',
-          })}
-          width="md"
+        <ProFormSelect
+          name='supplierId'
+          label={<FormattedMessage id="pages.searchgoods.supplierId" defaultMessage="Supplier" />}
+          options={supplierOptions}
+          fieldProps={{
+            showSearch: true,
+            filterOption: false, // 禁用默认过滤
+            onSearch: (value) => setSearchValue(value), // 更新搜索值
+            dropdownRender: (menu) => (
+              <div>
+                <Input.Search
+                  placeholder="Search supplier"
+                  onSearch={value => setSearchValue(value)}
+                  style={{ marginBottom: 8 }}
+                />
+                {menu}
+              </div>
+            ),
+          }}
           rules={[
             {
+              required: true,
               message: (
-                <FormattedMessage
-                  id="pages.searchgoods.supplierId"
-                  defaultMessage="请输入供应商！"
-                />
+                <FormattedMessage id="pages.searchgoods.supplierId" defaultMessage="Please select a supplier!" />
               ),
             },
           ]}
@@ -463,17 +513,17 @@ import {
             defaultMessage: '起订量',
           })}
           width="md"
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchgoods.moq"
-                  defaultMessage="请输入起订量！"
-                />
-              ),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     // required: true,
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchgoods.moq"
+          //         defaultMessage="请输入起订量！"
+          //       />
+          //     ),
+          //   },
+          // ]}
         />
           <ProFormTextArea
             name="remark"

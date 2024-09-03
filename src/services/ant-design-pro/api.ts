@@ -120,6 +120,39 @@ export async function suppliers(params: API.PageParams) {
   }
 }
 
+/** 获取供应商id和name GET /suppliers/search */
+export async function fetchSuppliers(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+  try {
+    const response = await request('/suppliers/search', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,
+        size: pageSize,
+      },
+    });
+
+    const formattedData = response.data.content.map(supplier => ({
+      id: supplier.id,
+      name: supplier.name,
+    }));
+
+    return {
+      data: formattedData,
+      total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error fetching suppliers:', error);
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
 /** 更新供应商 PUT /suppliers */
 export async function updateSuppliers(id: string, data: any) {
   try {
@@ -167,7 +200,7 @@ export async function removeSuppliers(ids: any) {
   }
 }
 
-/** 获取供应商 GET /goods/search */
+/** 获取商品 GET /goods/search */
 export async function goods(params: API.PageParams) {
   const { current, pageSize, ...restParams } = params;
   try {
@@ -194,7 +227,7 @@ export async function goods(params: API.PageParams) {
   }
 }
 
-/** 更新供应商 PUT /goods */
+/** 更新商品 PUT /goods */
 export async function updateGoods(id: string, data: any) {
   try {
     const response = await request<API.GoodsListItem>(`/goods/${id}`, {
@@ -213,7 +246,7 @@ export async function updateGoods(id: string, data: any) {
 }
 
 
-/** 新建供应商 POST /goods */
+/** 新建商品 POST /goods */
 export async function addGoods(options?: { [key: string]: any }) {
   return request<API.GoodsListItem>('/goods', {
     method: 'POST',
@@ -223,7 +256,7 @@ export async function addGoods(options?: { [key: string]: any }) {
   });
 }
 
-/** 删除供应商 DELETE /goods/batch */
+/** 删除商品 DELETE /goods/batch */
 export async function removeGoods(ids: any) {
   try {
     const response = await request<API.GoodsListItem>(`/goods/batch`, {

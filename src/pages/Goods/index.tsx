@@ -1,4 +1,4 @@
-import { addGoods, removeGoods, goods, updateGoods } from '@/services/ant-design-pro/api';
+import { addGoods, removeGoods, goods, updateGoods, fetchSuppliers } from '@/services/ant-design-pro/api';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
@@ -15,9 +15,11 @@ import {
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { Button, Drawer, Input, message, Modal } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm.tsx';
 import UpdateForm from './components/UpdateForm.tsx';
+
+
 /**
  * @en-US Add node
  * @zh-CN 添加节点
@@ -78,8 +80,6 @@ const handleUpdate = async (fields: FormValueType) => {
   }
 };
 
-
-
 /**
  *  Delete node
  * @zh-CN 删除节点
@@ -111,6 +111,36 @@ const handleRemove = async (selectedRows: API.GoodsListItem[]) => {
 };
 
 const Goods: React.FC = () => {
+  const [supplierOptions, setSupplierOptions] = useState([]);
+  const [filteredOptions, setFilteredOptions] = useState([]);
+  const [initialValues, setInitialValues] = useState({});
+  const [searchValue, setSearchValue] = useState('');
+
+  useEffect(() => {
+    // Fetch suppliers initially
+    const loadSuppliers = async () => {
+      const { data, success } = await fetchSuppliers({ current: 1, pageSize: 1000 }); // Fetch enough data
+      if (success) {
+        const options = data.map(supplier => ({
+          label: supplier.name,
+          value: supplier.id,
+        }));
+        setSupplierOptions(options);
+        setFilteredOptions(options); // Initialize filtered options
+      }
+    };
+
+    loadSuppliers();
+  }, []);
+
+  useEffect(() => {
+    // Filter suppliers based on search value
+    const filterOptions = supplierOptions.filter(option =>
+      option.label.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    setFilteredOptions(filterOptions);
+  }, [searchValue, supplierOptions]);
+
   /**
    * @en-US Pop-up window of new window
    * @zh-CN 新建窗口的弹窗
@@ -202,9 +232,8 @@ const Goods: React.FC = () => {
     },
     {
         title: <FormattedMessage id="pages.searchgoods.supplierId" defaultMessage="Description" />,
-        dataIndex: 'supplierId',
-        // sorter: true,
-        valueType: 'textarea',
+        dataIndex: 'supplier',
+        render: (supplier) => supplier?.name || 'No name',
     },
     {
         title: <FormattedMessage id="pages.searchgoods.leadTime" defaultMessage="Description" />,
@@ -586,22 +615,22 @@ const Goods: React.FC = () => {
               },
             ]}
           />
-          <ProFormText
+          <ProFormSelect
             name="supplierId"
-            width="md"
-            label={intl.formatMessage({
-              id: 'pages.searchgoods.supplierId',
-              defaultMessage: '供应商',
-            })}
+            label={<FormattedMessage id="pages.searchgoods.supplierId" defaultMessage="Supplier" />}
+            fieldProps={{
+            showSearch: true,
+            filterOption: false, // Disable default filtering
+            onSearch: (value) => setSearchValue(value), // Update search value
+            options: filteredOptions, // Use filtered options
+            }}
             rules={[
-              {
-                message: (
-                  <FormattedMessage
-                    id="pages.searchgoods.supplierId"
-                    defaultMessage="请选择供应商！"
-                  />
-                ),
-              },
+                {
+                    required: true,
+                    message: (
+                    <FormattedMessage id="pages.searchgoods.supplierId" defaultMessage="Please select a supplier!" />
+                    ),
+                },
             ]}
           />
           <ProFormText
