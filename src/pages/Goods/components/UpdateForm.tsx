@@ -1,4 +1,4 @@
-  import { fetchSuppliers } from '@/services/ant-design-pro/api';
+  import { fetchSuppliers,fileUpload } from '@/services/ant-design-pro/api';
   import {
     ProFormDateTimePicker,
     ProFormDatePicker,
@@ -8,11 +8,14 @@
     ProFormText,
     ProFormTextArea,
     StepsForm,
+    ProForm,
+    ProFormItem,
   } from '@ant-design/pro-components';
   import { FormattedMessage, useIntl } from '@umijs/max';
-  import { Modal,Input } from 'antd';
-  import React, {useEffect, useState } from 'react';
-  
+  import { Modal,Input,Upload,Button,message,InputNumber } from 'antd';
+  import React, {useEffect, useState, useRef } from 'react';
+  import { UploadOutlined } from '@ant-design/icons';
+
   export type FormValueType = {
     id?: string;
     internalCode?: string;
@@ -45,22 +48,15 @@
     const [supplierOptions, setSupplierOptions] = useState([]);
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [searchValue, setSearchValue] = useState('');
+    const [currentStep, setCurrentStep] = useState(0);
     // 从 props 中提取数据
-    const { supplier, leadTime, moq, remark } = props.values;
+    const { supplier, leadTime, moq, remark, picture } = props.values;
 
     // 提取 supplier 对象中的 id 和 name
     const supplierId = supplier?.id;
     const supplierName = supplier?.name;
+    const pictures = picture;
 
-    // 初始化表单的默认值
-    const initialValues = {
-      supplierId: supplierId, // 默认选中的供应商 ID
-      supplierName: supplierName, // 默认显示的供应商名称（只读）
-      leadTime: leadTime,
-      moq: moq,
-      remark: remark,
-    };
-  
     useEffect(() => {
       // Fetch suppliers initially
       const loadSuppliers = async () => {
@@ -77,6 +73,31 @@
   
       loadSuppliers();
     }, []);
+
+    const uploadProps = {
+      customRequest: async ({ file, onSuccess, onError }) => {
+        try {
+          const filename = file.name;
+            // Call your fileUpload function
+          const response = await fileUpload({filename,file});
+          if (response && response.data && response.data.fileUrl) {
+            onSuccess(response.data.fileUrl, file);
+            message.success(`${file.name} file uploaded successfully`);
+          } else {
+            onError(new Error('Upload failed.'));
+            message.error('File upload failed.');
+          }
+        } catch (error) {
+          onError(error);
+          message.error('File upload failed.');
+        }
+      },
+      listType: 'picture',
+      maxCount: 1,
+      showUploadList: {
+        showRemoveIcon: false, // Hide remove icon
+      },
+    };
   
     useEffect(() => {
       // Filter suppliers based on search value
@@ -92,6 +113,8 @@
         stepsProps={{
           size: 'small',
         }}
+        // current={currentStep}
+        // onChange={(current) => setCurrentStep(current)}
         stepsFormRender={(dom, submitter) => {
           return (
             <Modal
@@ -110,6 +133,7 @@
               footer={submitter}
               onCancel={() => {
                 props.onCancel();
+                setCurrentStep(0);
               }}
             >
               {dom}
@@ -119,22 +143,20 @@
         onFinish={props.onSubmit}
       >
         <StepsForm.StepForm
-          initialValues={{
-            id: props.values.id,
-            internalCode: props.values.internalCode,
-            externalCode: props.values.externalCode,
-            name: props.values.name,
-            category: props.values.category,
-          }}
-          title={intl.formatMessage({
-            id: 'pages.searchgoods.updateForm.basicConfig',
-            defaultMessage: '基本信息',
-          })}
-        >
+            initialValues={{
+              id: props.values.id,
+              internalCode: props.values.internalCode,
+              externalCode: props.values.externalCode,
+              name: props.values.name,
+              category: props.values.category,
+            }}
+            title={intl.formatMessage({
+              id: 'pages.searchgoods.updateForm.basicConfig',
+              defaultMessage: '基本信息',
+            })}
+          >
           <ProFormText
             name="id"
-            // readonly
-            disabled
             hidden={true}
             label={intl.formatMessage({
               id: 'pages.searchgoods.id',
@@ -145,13 +167,22 @@
           />
           <ProFormText
             name="internalCode"
-            // readonly
-            disabled
             label={intl.formatMessage({
               id: 'pages.searchgoods.internalCode',
               defaultMessage: '内部编码',
             })}
             width="md"
+            rules={[
+              {
+                required: true,
+                message: (
+                  <FormattedMessage
+                    id="pages.searchgoods.internalCode"
+                    defaultMessage="请输入内部编码！"
+                  />
+                ),
+              },
+            ]}
           />
           <ProFormText
             name="externalCode"
@@ -162,7 +193,7 @@
             width="md"
             rules={[
               {
-                // required: true,
+                required: true,
                 message: (
                   <FormattedMessage
                     id="pages.searchgoods.externalCode"
@@ -181,7 +212,7 @@
             width="md"
             rules={[
               {
-                // required: true,
+                required: true,
                 message: (
                   <FormattedMessage
                     id="pages.searchgoods.name"
@@ -213,7 +244,11 @@
         </StepsForm.StepForm>
         <StepsForm.StepForm
           initialValues={{
-            picture: props.values.picture,
+            picture: props.values.picture ? [{
+              status: 'done',
+              response: props.values.picture,
+              url: props.values.picture,
+            }] : [],
             brand: props.values.brand,
             details: props.values.details,
             usageLocation: props.values.usageLocation,
@@ -223,26 +258,22 @@
             defaultMessage: '基本信息',
           })}
         >
-          
-          <ProFormText
+          <ProForm.Item
             name="picture"
-            label={intl.formatMessage({
-              id: 'pages.searchgoods.picture',
-              defaultMessage: '图片',
-            })}
-            width="md"
+            label={intl.formatMessage({ id: 'pages.searchgoods.picture', defaultMessage: '图片' })}
+            valuePropName="fileList"
+            getValueFromEvent={(event) => event.fileList}
             rules={[
               {
-                // required: true,
-                message: (
-                  <FormattedMessage
-                    id="pages.searchgoods.picture"
-                    defaultMessage="请输入图片！"
-                  />
-                ),
+                required: true,
+                message: <FormattedMessage id="pages.searchgoods.picture" defaultMessage="请选择图片！" />,
               },
             ]}
-          />
+          >
+            <Upload {...uploadProps}>
+              <Button icon={<UploadOutlined />}>Upload</Button>
+            </Upload>
+          </ProForm.Item>
           <ProFormText
             name="brand"
             label={intl.formatMessage({
@@ -453,7 +484,13 @@
           />
         </StepsForm.StepForm>
         <StepsForm.StepForm
-          initialValues={initialValues}
+          initialValues={{
+            supplierId: supplierId,
+            supplierName: supplierName, // 默认显示的供应商名称（只读）
+            leadTime: leadTime,
+            moq: moq,
+            remark: remark,
+          }}
           title={intl.formatMessage({
             id: 'pages.searchgoods.updateForm.basicConfig',
             defaultMessage: '基本信息',

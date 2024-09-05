@@ -247,14 +247,16 @@ const Supplier: React.FC = () => {
         >
           <FormattedMessage id="pages.searchsupplier.edit" defaultMessage="Configuration" />
         </a>,
-        <a
-        onClick={() => {
-          setCurrentRow(record);
-          setShowDetail(true);
-        }}
-      >
-        <FormattedMessage id="pages.searchsupplier.details" defaultMessage="Configuration" />
-      </a>
+        !showDetail && (
+            <a
+            onClick={() => {
+              setCurrentRow(record);
+              setShowDetail(true);
+            }}
+          >
+            <FormattedMessage id="pages.searchsupplier.details" defaultMessage="Configuration" />
+          </a>
+        )
       ],
     },
   ];

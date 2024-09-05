@@ -137,7 +137,6 @@ export async function fetchSuppliers(params: API.PageParams) {
       id: supplier.id,
       name: supplier.name,
     }));
-
     return {
       data: formattedData,
       total: response.data.totalElements,
@@ -200,6 +199,25 @@ export async function removeSuppliers(ids: any) {
   }
 }
 
+/** OSS图片上传 POST /upload */
+export async function fileUpload(params: any) {
+  const { filename, file } = params;
+  const formData = new FormData();
+  formData.append('filename', filename);
+  formData.append('file', file);
+  try {
+    const response = await request('/upload', {
+      method: 'POST',
+      data: formData,
+    });
+    // console.log(response)
+    return response;
+  } catch (error) {
+    console.error('Failed to upload:', error);
+    throw error;
+  }
+}
+
 /** 获取商品 GET /goods/search */
 export async function goods(params: API.PageParams) {
   const { current, pageSize, ...restParams } = params;
@@ -212,7 +230,6 @@ export async function goods(params: API.PageParams) {
         size: pageSize,  // Map to 'size'
       },
     });
-
     return {
       data: response.data.content,
       total: response.data.totalElements,

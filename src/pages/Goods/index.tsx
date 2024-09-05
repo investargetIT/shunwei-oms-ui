@@ -1,5 +1,5 @@
-import { addGoods, removeGoods, goods, updateGoods, fetchSuppliers } from '@/services/ant-design-pro/api';
-import { PlusOutlined } from '@ant-design/icons';
+import { addGoods, removeGoods, goods, updateGoods, fetchSuppliers, fileUpload } from '@/services/ant-design-pro/api';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
   FooterToolbar,
@@ -12,9 +12,10 @@ import {
   StepsForm,
   ProFormSelect,
   ProFormDatePicker,
+  ProForm,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
-import { Button, Drawer, Input, message, Modal } from 'antd';
+import { Button, Drawer, Input, message, Modal, Upload } from 'antd';
 import React, {useEffect, useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm.tsx';
 import UpdateForm from './components/UpdateForm.tsx';
@@ -26,7 +27,11 @@ import UpdateForm from './components/UpdateForm.tsx';
  * @param fields
  */
 const handleAdd = async (fields: API.GoodsListItem) => {
-  const hide = message.loading('正在添加');
+    const hide = message.loading('正在添加');
+    // Extract the URL from the picture field
+    const picture = fields.picture[0].response; // URL of the uploaded picture
+        // Use the URL as needed, e.g., save it to the database or display it
+    fields.picture = picture;
   try {
     await addGoods({ ...fields });
     hide();
@@ -54,7 +59,7 @@ const handleUpdate = async (fields: FormValueType) => {
     externalCode: fields.externalCode,
     name: fields.name,
     category: fields.category,
-    picture: fields.picture,
+    picture: fields.picture[0].response,
     brand: fields.brand,
     details: fields.details,
     usageLocation: fields.usageLocation,
@@ -133,6 +138,33 @@ const Goods: React.FC = () => {
     loadSuppliers();
   }, []);
 
+  const uploadProps = {
+    customRequest: async ({ file, onSuccess, onError }) => {
+        try {
+            // Create FormData to send file and additional info if needed
+            // const fileNameWithExt = file.name;
+            // const fileNameWithoutExt = fileNameWithExt.substring(0, fileNameWithExt.lastIndexOf('.')) || fileNameWithExt;
+            // const filename = fileNameWithoutExt;
+            const filename = file.name;
+            // Call your fileUpload function
+            const response = await fileUpload({filename,file});
+            // console.log(response.data.fileUrl)
+            if (response.status) {
+                onSuccess(response.data.fileUrl, file); // Notify upload success
+                message.success(`${file.name} file uploaded successfully`);
+            } else {
+                onError(new Error('Upload failed.'));
+                message.error('File upload failed.');
+            }
+        } catch (error) {
+            onError(error); // Notify upload failure
+            message.error('File upload failed.');
+        }
+    },
+    listType: 'picture',
+    maxCount: 1,
+  };
+
   useEffect(() => {
     // Filter suppliers based on search value
     const filterOptions = supplierOptions.filter(option =>
@@ -188,7 +220,11 @@ const Goods: React.FC = () => {
     {
         title: <FormattedMessage id="pages.searchgoods.picture" defaultMessage="Description" />,
         dataIndex: 'picture',
-        valueType: 'textarea',
+        // valueType: 'textarea',
+        render: (text) => {
+            // Ensure text is a URL, render it as an image
+            return text ? <img src={text} alt="Picture" style={{ width: 100, height: 100, objectFit: 'cover' }} /> : 'No Image';
+          },
     },
     {
         title: <FormattedMessage id="pages.searchgoods.brand" defaultMessage="Description" />,
@@ -266,14 +302,17 @@ const Goods: React.FC = () => {
         >
           <FormattedMessage id="pages.searchgoods.operation.edit" defaultMessage="edit" />
         </a>,
-        <a
-        onClick={() => {
-          setCurrentRow(record);
-          setShowDetail(true);
-        }}
-      >
-        <FormattedMessage id="pages.searchgoods.operation.details" defaultMessage="details" />
-      </a>
+        !showDetail && ( // Check if detail view is not open
+            <a
+              key="details"
+              onClick={() => {
+                setCurrentRow(record);   // Sets the current row to show details
+                setShowDetail(true);     // Displays the details view
+              }}
+            >
+              <FormattedMessage id="pages.searchgoods.operation.details" defaultMessage="details" />
+            </a>
+          )
       ],
     },
   ];
@@ -350,272 +389,277 @@ const Goods: React.FC = () => {
           </Button> */}
         </FooterToolbar>
       )}
-      <ModalForm
-        title={intl.formatMessage({
-          id: 'pages.searchgoods.createForm.newInfo',
-          defaultMessage: '新建信息',
-        })}
-        width="400px"
-        open={createModalOpen}
-        onOpenChange={handleModalOpen}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.GoodsListItem);
-          if (success) {
-            handleModalOpen(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
+        <ModalForm
+            title={intl.formatMessage({
+            id: 'pages.searchgoods.createForm.newInfo',
+            defaultMessage: '新建信息',
+            })}
+            width="400px"
+            open={createModalOpen}
+            onOpenChange={handleModalOpen}
+            onFinish={async (value) => {
+            const success = await handleAdd(value as API.GoodsListItem);
+            if (success) {
+                handleModalOpen(false);
+                if (actionRef.current) {
+                actionRef.current.reload();
+                }
             }
-          }
-        }}
-      >
-      <ProFormText
-      name="internalCode"
-      label={intl.formatMessage({
-          id: 'pages.searchgoods.internalCode',
-          defaultMessage: '内部编码',
-      })}
-      width="md"
-      rules={[
-          {
-          // required: true,
-          message: (
-              <FormattedMessage
-              id="pages.searchgoods.internalCode"
-              defaultMessage="请输入内部编码！"
-              />
-          ),
-          },
-      ]}
-      />
-        <ProFormText
-        name="externalCode"
-        label={intl.formatMessage({
-            id: 'pages.searchgoods.externalCode',
-            defaultMessage: '外部编码',
-        })}
-        width="md"
-        rules={[
-            {
-            // required: true,
-            message: (
-                <FormattedMessage
-                id="pages.searchgoods.externalCode"
-                defaultMessage="请输入外部编码！"
-                />
-            ),
-            },
-        ]}
-        />
-        <ProFormText
-        name="name"
-        label={intl.formatMessage({
-            id: 'pages.searchgoods.name',
-            defaultMessage: '名称',
-        })}
-        width="md"
-        rules={[
-            {
-            // required: true,
-            message: (
-                <FormattedMessage
-                id="pages.searchgoods.name"
-                defaultMessage="请输入名称！"
-                />
-            ),
-            },
-        ]}
-        />
-        <ProFormText
-        name="category"
-        label={intl.formatMessage({
-            id: 'pages.searchgoods.category',
-            defaultMessage: '产品分类',
-        })}
-        width="md"
-        rules={[
-            {
-            // required: true,
-            message: (
-                <FormattedMessage
-                id="pages.searchgoods.category"
-                defaultMessage="请输入产品分类"
-                />
-            ),
-            },
-        ]}
-        />
-        <ProFormText
-            name="picture"
+            }}
+        >
+            <ProFormText
+            name="internalCode"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.picture',
-              defaultMessage: '图片',
+                id: 'pages.searchgoods.internalCode',
+                defaultMessage: '内部编码',
             })}
             width="md"
             rules={[
-              {
-                // required: true,
+                {
+                required: true,
                 message: (
-                  <FormattedMessage
-                    id="pages.searchgoods.picture"
-                    defaultMessage="请输入图片！"
-                  />
+                    <FormattedMessage
+                    id="pages.searchgoods.internalCode"
+                    defaultMessage="请输入内部编码！"
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormText
+            />
+            <ProFormText
+            name="externalCode"
+            label={intl.formatMessage({
+                id: 'pages.searchgoods.externalCode',
+                defaultMessage: '外部编码',
+            })}
+            width="md"
+            rules={[
+                {
+                required: true,
+                message: (
+                    <FormattedMessage
+                    id="pages.searchgoods.externalCode"
+                    defaultMessage="请输入外部编码！"
+                    />
+                ),
+                },
+            ]}
+            />
+            <ProFormText
+            name="name"
+            label={intl.formatMessage({
+                id: 'pages.searchgoods.name',
+                defaultMessage: '名称',
+            })}
+            width="md"
+            rules={[
+                {
+                required: true,
+                message: (
+                    <FormattedMessage
+                    id="pages.searchgoods.name"
+                    defaultMessage="请输入名称！"
+                    />
+                ),
+                },
+            ]}
+            />
+            <ProFormText
+                name="category"
+                label={intl.formatMessage({
+                    id: 'pages.searchgoods.category',
+                    defaultMessage: '产品分类',
+                })}
+                width="md"
+                rules={[
+                    {
+                    // required: true,
+                    message: (
+                        <FormattedMessage
+                        id="pages.searchgoods.category"
+                        defaultMessage="请输入产品分类"
+                        />
+                    ),
+                    },
+                ]}
+            />
+            <ProForm.Item
+                name="picture"
+                label={intl.formatMessage({
+                    id: 'pages.searchgoods.picture',
+                    defaultMessage: '图片',
+                })}
+                valuePropName="fileList"
+                getValueFromEvent={({ fileList }) => fileList}
+                rules={[
+                    {
+                        required: true,
+                        message: (
+                            <FormattedMessage
+                                id="pages.searchgoods.picture"
+                                defaultMessage="请选择图片！"
+                            />
+                        ),
+                    },
+                ]}
+            >
+                <Upload {...uploadProps} >
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                </Upload>
+            </ProForm.Item>
+            <ProFormText
             name="brand"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.brand',
-              defaultMessage: '品牌',
+                id: 'pages.searchgoods.brand',
+                defaultMessage: '品牌',
             })}
             width="md"
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.brand"
                     defaultMessage="请输入品牌！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormText
+            />
+            <ProFormText
             name="details"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.details',
-              defaultMessage: '型号/规格/容量/颜色）',
+                id: 'pages.searchgoods.details',
+                defaultMessage: '型号/规格/容量/颜色）',
             })}
             width="md"
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.details"
                     defaultMessage="请输入型号/规格/容量/颜色！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormText
+            />
+            <ProFormText
             name="usageLocation"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.usageLocation',
-              defaultMessage: '使用位置',
+                id: 'pages.searchgoods.usageLocation',
+                defaultMessage: '使用位置',
             })}
             width="md"
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.usageLocation"
                     defaultMessage="请输入使用位置！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-        <ProFormText
+            />
+            <ProFormText
             name="unit"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.unit',
-              defaultMessage: '单位',
+                id: 'pages.searchgoods.unit',
+                defaultMessage: '单位',
             })}
             width="md"
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.unit"
                     defaultMessage="请输入单位！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormText
+            />
+            <ProFormText
             name="boxStandards"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.boxStandards',
-              defaultMessage: '箱规',
+                id: 'pages.searchgoods.boxStandards',
+                defaultMessage: '箱规',
             })}
             width="md"
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.boxStandards"
                     defaultMessage="请输入箱规！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormText
+            />
+            <ProFormText
             name="costPrice"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.costPrice',
-              defaultMessage: '成本价',
+                id: 'pages.searchgoods.costPrice',
+                defaultMessage: '成本价',
             })}
             width="md"
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.costPrice"
                     defaultMessage="请输入成本价！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormText
+            />
+            <ProFormText
             name="sellingPrice"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.sellingPrice',
-              defaultMessage: '销售价',
+                id: 'pages.searchgoods.sellingPrice',
+                defaultMessage: '销售价',
             })}
             width="md"
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.sellingPrice"
                     defaultMessage="请输入销售价！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormText
+            />
+            <ProFormText
             name="grossMargin"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.grossMargin',
-              defaultMessage: '毛利率',
+                id: 'pages.searchgoods.grossMargin',
+                defaultMessage: '毛利率',
             })}
             width="md"
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.grossMargin"
                     defaultMessage="请输入毛利率！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormSelect
+            />
+            <ProFormSelect
             name="supplierId"
             label={<FormattedMessage id="pages.searchgoods.supplierId" defaultMessage="Supplier" />}
             fieldProps={{
@@ -624,120 +668,119 @@ const Goods: React.FC = () => {
             onSearch: (value) => setSearchValue(value), // Update search value
             options: filteredOptions, // Use filtered options
             }}
-            rules={[
-                {
-                    required: true,
-                    message: (
-                    <FormattedMessage id="pages.searchgoods.supplierId" defaultMessage="Please select a supplier!" />
-                    ),
-                },
-            ]}
-          />
-          <ProFormText
+            // rules={[
+            //     {
+            //         required: true,
+            //         message: (
+            //         <FormattedMessage id="pages.searchgoods.supplierId" defaultMessage="Please select a supplier!" />
+            //         ),
+            //     },
+            // ]}
+            />
+            <ProFormText
             name="leadTime"
             width="md"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.leadTime',
-              defaultMessage: '供货周期',
+                id: 'pages.searchgoods.leadTime',
+                defaultMessage: '供货周期',
             })}
             rules={[
-              {
+                {
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.leadTime"
                     defaultMessage="请选择供货周期！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormText
+            />
+            <ProFormText
             name="moq"
             width="md"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.moq',
-              defaultMessage: '起订量',
+                id: 'pages.searchgoods.moq',
+                defaultMessage: '起订量',
             })}
             rules={[
-              {
+                {
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.moq"
                     defaultMessage="请选择起订量！"
-                  />
+                    />
                 ),
-              },
+                },
             ]}
-          />
-          <ProFormTextArea
+            />
+            <ProFormTextArea
             name="remark"
             width="md"
             label={intl.formatMessage({
-              id: 'pages.searchgoods.remark',
-              defaultMessage: '备注',
+                id: 'pages.searchgoods.remark',
+                defaultMessage: '备注',
             })}
             // placeholder={intl.formatMessage({
             //   id: 'pages.searchgoods.remark',
             //   defaultMessage: '请输入备注！',
             // })}
             rules={[
-              {
+                {
                 // required: true,
                 message: (
-                  <FormattedMessage
+                    <FormattedMessage
                     id="pages.searchgoods.remark"
                     defaultMessage="请输入备注！"
-                  />
+                    />
                 ),
                 // min: 5,
-              },
+                },
             ]}
-          />
-      </ModalForm>
-      <UpdateForm
-        onSubmit={async (value) => {
-          const success = await handleUpdate(value);
-          if (success) {
-            handleUpdateModalOpen(false);
-            setCurrentRow(undefined);
-            if (actionRef.current) {
-              actionRef.current.reload();
+            />
+        </ModalForm>
+        <UpdateForm
+            onSubmit={async (value) => {
+            const success = await handleUpdate(value);
+            if (success) {
+                handleUpdateModalOpen(false);
+                setCurrentRow(undefined);
+                if (actionRef.current) {
+                actionRef.current.reload();
+                }
             }
-          }
-        }}
-        onCancel={() => {
-          handleUpdateModalOpen(false);
-          if (!showDetail) {
-            setCurrentRow(undefined);
-          }
-        }}
-        updateModalOpen={updateModalOpen}
-        values={currentRow || {}}
-      />
-
-      <Drawer
-        width={600}
-        open={showDetail}
-        onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
-        }}
-        closable={false}
-      >
-        {currentRow?.name && (
-          <ProDescriptions<API.GoodsListItem>
-            column={2}
-            title={currentRow?.name}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.name,
             }}
-            columns={columns as ProDescriptionsItemProps<API.GoodsListItem>[]}
-          />
-        )}
-      </Drawer>
+            onCancel={() => {
+            handleUpdateModalOpen(false);
+            if (!showDetail) {
+                setCurrentRow(undefined);
+            }
+            }}
+            updateModalOpen={updateModalOpen}
+            values={currentRow || {}}
+        />
+        <Drawer
+            width={600}
+            open={showDetail}
+            onClose={() => {
+            setCurrentRow(undefined);
+            setShowDetail(false);
+            }}
+            closable={false}
+        >
+            {currentRow?.name && (
+            <ProDescriptions<API.GoodsListItem>
+                column={2}
+                title={currentRow?.name}
+                request={async () => ({
+                data: currentRow || {},
+                })}
+                params={{
+                id: currentRow?.name,
+                }}
+                columns={columns as ProDescriptionsItemProps<API.GoodsListItem>[]}
+            />
+            )}
+        </Drawer>
     </PageContainer>
   );
 };
