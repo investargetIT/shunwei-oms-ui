@@ -24,10 +24,7 @@ export async function outLogin(options?: { [key: string]: any }) {
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
   return request<API.LoginResult>(process.env.USER_AUTH_BASE_URL + '/user/login/password', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
+    data: `username=${body.username}&password=${body.password}`,
     ...(options || {}),
   });
 }
