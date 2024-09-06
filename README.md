@@ -1,4 +1,4 @@
-# 基本操作
+# 开发
 1.构建镜像
 ```
 ./build.sh
@@ -7,11 +7,13 @@
 ```
 ./run.sh
 ```
-3.生成静态文件，静态文件会生成在 `/dist` 目录下
+3.访问 http://localhost:8000 查看界面
+# 发布 
+1.生成静态文件，静态文件会生成在 `/dist` 目录下
 ```
 docker run shunwei-oms-ui npm run build
 ```
-4.上传静态页面
+2.上传静态页面到服务器
 ```
 scp -r dist/* root@ip地址:/目录
 ```
