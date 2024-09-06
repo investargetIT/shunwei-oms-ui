@@ -733,26 +733,28 @@ const Goods: React.FC = () => {
             ]}
             />
         </ModalForm>
+      {currentRow && (
         <UpdateForm
-            onSubmit={async (value) => {
+          onSubmit={async (value) => {
             const success = await handleUpdate(value);
             if (success) {
-                handleUpdateModalOpen(false);
-                setCurrentRow(undefined);
-                if (actionRef.current) {
+              handleUpdateModalOpen(false);
+              setCurrentRow(undefined);
+              if (actionRef.current) {
                 actionRef.current.reload();
-                }
+              }
             }
-            }}
-            onCancel={() => {
+          }}
+          onCancel={() => {
             handleUpdateModalOpen(false);
             if (!showDetail) {
-                setCurrentRow(undefined);
+              setCurrentRow(undefined);
             }
-            }}
-            updateModalOpen={updateModalOpen}
-            values={currentRow || {}}
+          }}
+          updateModalOpen={updateModalOpen}
+          values={currentRow || {}}
         />
+      )}
         <Drawer
             width={600}
             open={showDetail}
