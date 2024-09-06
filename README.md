@@ -15,3 +15,7 @@ docker run shunwei-oms-ui npm run build
 ```
 scp -r dist/* root@ip地址:/目录
 ```
+# 环境变量
+1. 在`.env`文件中设置环境变量（别忘了修改`.env.example`文件）
+2. 在`/config/config.ts`文件的`define`部分引入环境变量
+3. 在代码中使用环境变量`process.env.NAME`
