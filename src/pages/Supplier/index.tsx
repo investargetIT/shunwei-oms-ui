@@ -18,97 +18,6 @@ import { Button, Drawer, Input, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm.tsx';
 import UpdateForm from './components/UpdateForm.tsx';
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.SuppliersListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addSuppliers({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
-
-/**
- * @en-US Update node
- * @zh-CN 更新节点
- *
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('Configuring');
-  const id  = fields.id;
-  const values = {
-    id: fields.id,
-    code: fields.code,
-    name: fields.name,
-    bankAccount: fields.bankAccount,
-    partnershipCase: fields.partnershipCase,
-    attribute: fields.attribute,
-    mode: fields.mode,
-    hotel: fields.hotel,
-    status: fields.status,
-    contact: fields.contact,
-    position: fields.position,
-    telephone: fields.telephone,
-    salesman: fields.salesman,
-    contractStatus: fields.contractStatus,
-    dealDate: fields.dealDate,
-    startDate: fields.startDate,
-    endDate: fields.endDate,
-    remark: fields.remark,
-  }
-  try {
-    await updateSuppliers(id, values);
-    hide();
-    message.success('Configuration is successful');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Configuration failed, please try again!');
-    return false;
-  }
-};
-
-
-
-/**
- *  Delete node
- * @zh-CN 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.SuppliersListItem[]) => {
-  Modal.confirm({
-    title: <FormattedMessage id="pages.searchsupplier.deleteConfirmTitle" defaultMessage="确认删除" />,
-    content: <FormattedMessage id="pages.searchsupplier.deleteConfirmContent" defaultMessage="确定要删除吗？" />,
-    okText: <FormattedMessage id="pages.searchsupplier.deleteConfirmOk" defaultMessage="确认删除" />,
-    cancelText: <FormattedMessage id="pages.searchsupplier.deleteConfirmCancel" defaultMessage="取消" />,
-    onOk: async () => {
-      const hide = message.loading('正在删除');
-      if (!selectedRows) return true;
-      const ids = selectedRows.map((row) => row.id);
-      try {
-        await removeSuppliers(ids);
-        hide();
-        message.success('Deleted successfully and will refresh soon');
-        return true;
-      } catch (error) {
-        hide();
-        message.error('Delete failed, please try again');
-        return false;
-      }
-    }
-  });
-};
 
 const Supplier: React.FC = () => {
   /**
@@ -261,6 +170,100 @@ const Supplier: React.FC = () => {
     },
   ];
 
+  /**
+ * @en-US Add node
+ * @zh-CN 添加节点
+ * @param fields
+ */
+  const handleAdd = async (fields: API.SuppliersListItem) => {
+    const hide = message.loading('正在添加');
+    try {
+      await addSuppliers({ ...fields });
+      hide();
+      message.success('Added successfully');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Adding failed, please try again!');
+      return false;
+    }
+  };
+
+  /**
+   * @en-US Update node
+   * @zh-CN 更新节点
+   *
+   * @param fields
+   */
+  const handleUpdate = async (fields: FormValueType) => {
+    const hide = message.loading('Configuring');
+    const id = fields.id;
+    const values = {
+      id: fields.id,
+      code: fields.code,
+      name: fields.name,
+      bankAccount: fields.bankAccount,
+      partnershipCase: fields.partnershipCase,
+      attribute: fields.attribute,
+      mode: fields.mode,
+      hotel: fields.hotel,
+      status: fields.status,
+      contact: fields.contact,
+      position: fields.position,
+      telephone: fields.telephone,
+      salesman: fields.salesman,
+      contractStatus: fields.contractStatus,
+      dealDate: fields.dealDate,
+      startDate: fields.startDate,
+      endDate: fields.endDate,
+      remark: fields.remark,
+    }
+    try {
+      await updateSuppliers(id, values);
+      hide();
+      message.success('Configuration is successful');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Configuration failed, please try again!');
+      return false;
+    }
+  };
+
+
+
+  /**
+   *  Delete node
+   * @zh-CN 删除节点
+   *
+   * @param selectedRows
+   */
+  const handleRemove = async (selectedRows: API.SuppliersListItem[]) => {
+    Modal.confirm({
+      title: <FormattedMessage id="pages.searchsupplier.deleteConfirmTitle" defaultMessage="确认删除" />,
+      content: <FormattedMessage id="pages.searchsupplier.deleteConfirmContent" defaultMessage="确定要删除吗？" />,
+      okText: <FormattedMessage id="pages.searchsupplier.deleteConfirmOk" defaultMessage="确认删除" />,
+      cancelText: <FormattedMessage id="pages.searchsupplier.deleteConfirmCancel" defaultMessage="取消" />,
+      onOk: async () => {
+        const hide = message.loading('正在删除');
+        if (!selectedRows) return true;
+        const ids = selectedRows.map((row) => row.id);
+        try {
+          await removeSuppliers(ids);
+          hide();
+          message.success('删除成功');
+          setSelectedRows([]);
+          actionRef.current?.reloadAndRest?.();
+          return true;
+        } catch (error) {
+          hide();
+          message.error('Delete failed, please try again');
+          return false;
+        }
+      }
+    });
+  };
+
   return (
     <PageContainer>
       <ProTable<API.SuppliersListItem, API.PageParams>
@@ -314,11 +317,7 @@ const Supplier: React.FC = () => {
           }
         >
           <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
+            onClick={() => handleRemove(selectedRowsState)}
           >
             <FormattedMessage
               id="pages.searchsupplier.batchDeletion"
