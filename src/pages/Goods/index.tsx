@@ -20,101 +20,6 @@ import React, {useEffect, useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm.tsx';
 import UpdateForm from './components/UpdateForm.tsx';
 
-
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.GoodsListItem) => {
-    const hide = message.loading('正在添加');
-    // Extract the URL from the picture field
-    const picture = fields.picture[0].response; // URL of the uploaded picture
-        // Use the URL as needed, e.g., save it to the database or display it
-    fields.picture = picture;
-  try {
-    await addGoods({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
-};
-
-/**
- * @en-US Update node
- * @zh-CN 更新节点
- *
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('Configuring');
-  const id  = fields.id;
-  const values = {
-    id: fields.id,
-    internalCode: fields.internalCode,
-    externalCode: fields.externalCode,
-    name: fields.name,
-    category: fields.category,
-    picture: fields.picture[0].response,
-    brand: fields.brand,
-    details: fields.details,
-    usageLocation: fields.usageLocation,
-    unit: fields.unit,
-    boxStandards: fields.boxStandards,
-    costPrice: fields.costPrice,
-    sellingPrice: fields.sellingPrice,
-    grossMargin: fields.grossMargin,
-    supplierId: fields.supplierId,
-    leadTime: fields.leadTime,
-    moq: fields.moq,
-    remark: fields.remark,
-  }
-  try {
-    await updateGoods(id, values);
-    hide();
-    message.success('Configuration is successful');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Configuration failed, please try again!');
-    return false;
-  }
-};
-
-/**
- *  Delete node
- * @zh-CN 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.GoodsListItem[]) => {
-  Modal.confirm({
-    title: <FormattedMessage id="pages.searchgoods.deleteConfirmTitle" defaultMessage="确认删除" />,
-    content: <FormattedMessage id="pages.searchgoods.deleteConfirmContent" defaultMessage="确定要删除吗？" />,
-    okText: <FormattedMessage id="pages.searchgoods.deleteConfirmOk" defaultMessage="确认删除" />,
-    cancelText: <FormattedMessage id="pages.searchgoods.deleteConfirmCancel" defaultMessage="取消" />,
-    onOk: async () => {
-      const hide = message.loading('正在删除');
-      if (!selectedRows) return true;
-      const ids = selectedRows.map((row) => row.id);
-      try {
-        await removeGoods(ids);
-        hide();
-        message.success('Deleted successfully and will refresh soon');
-        return true;
-      } catch (error) {
-        hide();
-        message.error('Delete failed, please try again');
-        return false;
-      }
-    }
-  });
-};
-
 const Goods: React.FC = () => {
   const [supplierOptions, setSupplierOptions] = useState([]);
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -317,6 +222,102 @@ const Goods: React.FC = () => {
     },
   ];
 
+  /**
+ * @en-US Add node
+ * @zh-CN 添加节点
+ * @param fields
+ */
+  const handleAdd = async (fields: API.GoodsListItem) => {
+    const hide = message.loading('正在添加');
+    // Extract the URL from the picture field
+    const picture = fields.picture[0].response; // URL of the uploaded picture
+    // Use the URL as needed, e.g., save it to the database or display it
+    fields.picture = picture;
+    try {
+      await addGoods({ ...fields });
+      hide();
+      message.success('Added successfully');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Adding failed, please try again!');
+      return false;
+    }
+  };
+
+  /**
+  * @en-US Update node
+  * @zh-CN 更新节点
+  *
+  * @param fields
+  */
+  const handleUpdate = async (fields: FormValueType) => {
+    const hide = message.loading('Configuring');
+    const id = fields.id;
+    const values = {
+      id: fields.id,
+      internalCode: fields.internalCode,
+      externalCode: fields.externalCode,
+      name: fields.name,
+      category: fields.category,
+      picture: fields.picture[0].response,
+      brand: fields.brand,
+      details: fields.details,
+      usageLocation: fields.usageLocation,
+      unit: fields.unit,
+      boxStandards: fields.boxStandards,
+      costPrice: fields.costPrice,
+      sellingPrice: fields.sellingPrice,
+      grossMargin: fields.grossMargin,
+      supplierId: fields.supplierId,
+      leadTime: fields.leadTime,
+      moq: fields.moq,
+      remark: fields.remark,
+    }
+    try {
+      await updateGoods(id, values);
+      hide();
+      message.success('Configuration is successful');
+      return true;
+    } catch (error) {
+      hide();
+      message.error('Configuration failed, please try again!');
+      return false;
+    }
+  };
+
+  /**
+  *  Delete node
+  * @zh-CN 删除节点
+  *
+  * @param selectedRows
+  */
+  const handleRemove = async (selectedRows: API.GoodsListItem[]) => {
+    Modal.confirm({
+      title: <FormattedMessage id="pages.searchgoods.deleteConfirmTitle" defaultMessage="确认删除" />,
+      content: <FormattedMessage id="pages.searchgoods.deleteConfirmContent" defaultMessage="确定要删除吗？" />,
+      okText: <FormattedMessage id="pages.searchgoods.deleteConfirmOk" defaultMessage="确认删除" />,
+      cancelText: <FormattedMessage id="pages.searchgoods.deleteConfirmCancel" defaultMessage="取消" />,
+      onOk: async () => {
+        const hide = message.loading('正在删除');
+        if (!selectedRows) return true;
+        const ids = selectedRows.map((row) => row.id);
+        try {
+          await removeGoods(ids);
+          hide();
+          message.success('删除成功');
+          setSelectedRows([]);
+          actionRef.current?.reloadAndRest?.();
+          return true;
+        } catch (error) {
+          hide();
+          message.error('Delete failed, please try again');
+          return false;
+        }
+      }
+    });
+  };
+
   return (
     <PageContainer>
       <ProTable<API.GoodsListItem, API.PageParams>
@@ -369,13 +370,7 @@ const Goods: React.FC = () => {
             </div>
           }
         >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
+          <Button onClick={() => handleRemove(selectedRowsState)}>
             <FormattedMessage
               id="pages.searchgoods.batchDeletion"
               defaultMessage="Batch deletion"
