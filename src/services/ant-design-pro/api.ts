@@ -6,7 +6,7 @@ import { request } from '@umijs/max';
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
     data: API.CurrentUser;
-  }>('http://localhost:8000/api/currentUser', {
+  }>(process.env.USER_AUTH_BASE_URL + '/user/user-check', {
     method: 'GET',
     ...(options || {}),
   });
