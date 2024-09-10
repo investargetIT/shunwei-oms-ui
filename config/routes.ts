@@ -58,16 +58,16 @@ export default [
     component: './Supplier',
   },
   {
-    name: 'goods',
-    icon: 'table',
-    path: '/goods',
-    component: './Goods',
-  },
-  {
     name: 'goodsCategory',
     icon: 'table',
     path: '/goodsCategory',
     component: './GoodsCategory',
+  },
+  {
+    name: 'goods',
+    icon: 'table',
+    path: '/goods',
+    component: './Goods',
   },
   // {
   //   name: 'client',
