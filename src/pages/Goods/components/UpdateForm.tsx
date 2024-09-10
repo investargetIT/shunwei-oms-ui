@@ -1,4 +1,4 @@
-  import { fetchSuppliers,fileUpload } from '@/services/ant-design-pro/api';
+  import { fetchSuppliers,fileUpload,fetchGoodsCategory } from '@/services/ant-design-pro/api';
   import {
     ProFormDateTimePicker,
     ProFormDatePicker,
@@ -32,6 +32,7 @@
     sellingPrice?: string;
     grossMargin?: string;
     supplierId?: string;
+    goodsCategoryId?: string;
     leadTime?: string;
     moq?: string;
     remark?: string;
@@ -49,13 +50,17 @@
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [currentStep, setCurrentStep] = useState(0);
+    const [GoodsCategoryOptions, setGoodsCategoryOptions] = useState([]);
+    const [filteredGoodsCategoryOptions, setFilteredGoodsCategoryOptions] = useState([]);
+    const [searchGoodsCategoryValue, setSearchGoodsCategoryValue] = useState('');
     // 从 props 中提取数据
-    const { supplier, leadTime, moq, remark, picture } = props.values;
+    const { supplier, leadTime, moq, remark, picture, goodsCategory } = props.values;
 
     // 提取 supplier 对象中的 id 和 name
     const supplierId = supplier?.id;
     const supplierName = supplier?.name;
-    const pictures = picture;
+    const goodsCategoryId = goodsCategory?.id;
+    const goodsCategoryName = goodsCategory?.name;
 
     useEffect(() => {
       // Fetch suppliers initially
@@ -70,8 +75,27 @@
           setFilteredOptions(options); // Initialize filtered options
         }
       };
-  
       loadSuppliers();
+    }, []);
+
+    useEffect(() => {
+      // Fetch suppliers initially
+      const loadGoodsCategory = async () => {
+        const { data, success } = await fetchGoodsCategory({ current: 1, pageSize: 10000 }); // Fetch enough data
+        if (success) {
+          // const options = data.map(goodsCategory => ({
+          //   label: goodsCategory.name,
+          //   value: goodsCategory.id,
+          // }));
+          const options = data.map(goodsCategory => ({
+            label: `${goodsCategory.parentCategory + '/'}${goodsCategory.category + '/'}${goodsCategory.subCategory + '/'}${goodsCategory.name}`,
+            value: goodsCategory.id,
+          }));
+          setGoodsCategoryOptions(options);
+          setFilteredGoodsCategoryOptions(options); // Initialize filtered options
+        }
+      };
+      loadGoodsCategory();
     }, []);
 
     const uploadProps = {
@@ -106,6 +130,14 @@
       );
       setFilteredOptions(filterOptions);
     }, [searchValue, supplierOptions]);
+
+    useEffect(() => {
+      // Filter suppliers based on search value
+      const filterGoodsCategoryOptions = GoodsCategoryOptions.filter(option =>
+        option.label.toLowerCase().includes(searchGoodsCategoryValue.toLowerCase())
+      );
+      setFilteredGoodsCategoryOptions(filterGoodsCategoryOptions);
+    }, [searchGoodsCategoryValue, GoodsCategoryOptions]);
     
     const intl = useIntl();
     return (
@@ -148,7 +180,8 @@
               internalCode: props.values.internalCode,
               externalCode: props.values.externalCode,
               name: props.values.name,
-              category: props.values.category,
+              goodsCategoryId: goodsCategoryId,
+              goodsCategoryName: goodsCategoryName,
             }}
             title={intl.formatMessage({
               id: 'pages.searchgoods.updateForm.basicConfig',
@@ -222,25 +255,34 @@
               },
             ]}
           />
-          <ProFormText
-            name="category"
-            label={intl.formatMessage({
-              id: 'pages.searchgoods.category',
-              defaultMessage: '产品分类',
-            })}
-            width="md"
+          <ProFormSelect
+            name='goodsCategoryId'
+            label={<FormattedMessage id="pages.searchgoods.goodsCategoryId" defaultMessage="goodsCategoryId" />}
+            options={GoodsCategoryOptions}
+            fieldProps={{
+              showSearch: true,
+              filterOption: true, // 禁用默认过滤
+              onSearch: (value) => setSearchGoodsCategoryValue(value), // 更新搜索值
+              // dropdownRender: (menu) => (
+              //   <div>
+              //     <Input.Search
+              //       placeholder="Search goodsCategory"
+              //       onSearch={value => setSearchGoodsCategoryValue(value)}
+              //       style={{ marginBottom: 8 }}
+              //     />
+              //     {menu}
+              //   </div>
+              // ),
+            }}
             rules={[
               {
-                // required: true,
+                required: true,
                 message: (
-                  <FormattedMessage
-                    id="pages.searchgoods.category"
-                    defaultMessage="请输入产品分类！"
-                  />
+                  <FormattedMessage id="pages.searchgoods.goodsCategoryId" defaultMessage="Please select a goodsCategory!" />
                 ),
               },
             ]}
-          />
+        />
         </StepsForm.StepForm>
         <StepsForm.StepForm
           initialValues={{
@@ -502,18 +544,18 @@
           options={supplierOptions}
           fieldProps={{
             showSearch: true,
-            filterOption: false, // 禁用默认过滤
+            filterOption: true, // 禁用默认过滤
             onSearch: (value) => setSearchValue(value), // 更新搜索值
-            dropdownRender: (menu) => (
-              <div>
-                <Input.Search
-                  placeholder="Search supplier"
-                  onSearch={value => setSearchValue(value)}
-                  style={{ marginBottom: 8 }}
-                />
-                {menu}
-              </div>
-            ),
+            // dropdownRender: (menu) => (
+            //   <div>
+            //     <Input.Search
+            //       placeholder="Search supplier"
+            //       onSearch={value => setSearchValue(value)}
+            //       style={{ marginBottom: 8 }}
+            //     />
+            //     {menu}
+            //   </div>
+            // ),
           }}
           rules={[
             {

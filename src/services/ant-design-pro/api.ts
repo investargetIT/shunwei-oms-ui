@@ -287,3 +287,110 @@ export async function removeGoods(ids: any) {
     throw error;
   }
 }
+
+/** 获取商品品类 GET /goods/categories */
+export async function goodsCategory(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+  try {
+    const response = await request('/goods/categories', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,   // Map to 'page'
+        size: pageSize,  // Map to 'size'
+      },
+    });
+    return {
+      data: response.data.content,
+      total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
+/** 获取商品品类的id、类别、name GET /goods/categories */
+export async function fetchGoodsCategory(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+  try {
+    const response = await request('/goods/categories', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,
+        size: pageSize,
+      },
+    });
+    const formattedData = response.data.content.map(goodsCategory => ({
+      id: goodsCategory.id,
+      parentCategory: goodsCategory.parentCategory,
+      category: goodsCategory.category,
+      subCategory: goodsCategory.subCategory,
+      name: goodsCategory.name,
+    }));
+    return {
+      data: formattedData,
+      total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error fetching goodsCategories:', error);
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
+/** 更新商品品类 PUT /goods/categories */
+export async function updateGoodsCategory(id: string, data: any) {
+  try {
+    const response = await request<API.GoodsCategoryItem>(`/goods/categories/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+      data,
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to update goodsCategories:', error);
+    throw error;
+  }
+}
+
+
+/** 新建商品品类 POST /goods */
+export async function addGoodsCategory(options?: { [key: string]: any }) {
+  return request<API.GoodsListItem>('/goods', {
+    method: 'POST',
+    data:{
+      ...(options || {}),
+    }
+  });
+}
+
+/** 删除商品品类 DELETE /goods/categories */
+export async function removeGoodsCategory(ids: any) {
+  try {
+    const response = await request<API.GoodsListItem>(`/goods/categories`, {
+      method: 'DELETE',
+      data: {ids},
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to delete goodsCategory:', error);
+    throw error;
+  }
+}

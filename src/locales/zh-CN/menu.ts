@@ -52,4 +52,5 @@ export default {
   'menu.supplier': '供应商管理',
   'menu.goods': '商品管理',
   'menu.client': '客户管理',
+  'menu.goodsCategory': '品类管理',
 };

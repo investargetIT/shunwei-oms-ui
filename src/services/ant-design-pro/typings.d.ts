@@ -145,6 +145,7 @@ declare namespace API {
     sellingPrice?: string;
     grossMargin?: string;
     supplierId?: string;
+    goodsCategoryId?: string;
     leadTime?: string;
     moq?: string;
     remark?: string;
@@ -154,6 +155,26 @@ declare namespace API {
 
   type GoodsList = {
     data?: GoodsListItem[];
+    /** 列表的内容总数 */
+    total?: number;
+    success?: boolean;
+  };
+
+  type GoodsCategoryItem = {
+    id?: string;
+    parentCategory?: string;
+    category?: string;
+    subCategory?: string;
+    name?: string;
+    attributes?: string;
+    others?: string;
+    remark?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type GoodsCategory = {
+    data?: GoodsCategoryItem[];
     /** 列表的内容总数 */
     total?: number;
     success?: boolean;

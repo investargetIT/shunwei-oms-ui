@@ -1,4 +1,4 @@
-import { addGoods, removeGoods, goods, updateGoods, fetchSuppliers, fileUpload } from '@/services/ant-design-pro/api';
+import { addGoods, removeGoods, goods, updateGoods, fetchSuppliers, fileUpload, fetchGoodsCategory } from '@/services/ant-design-pro/api';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
@@ -25,6 +25,9 @@ const Goods: React.FC = () => {
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [initialValues, setInitialValues] = useState({});
   const [searchValue, setSearchValue] = useState('');
+  const [GoodsCategoryOptions, setGoodsCategoryOptions] = useState([]);
+  const [filteredGoodsCategoryOptions, setFilteredGoodsCategoryOptions] = useState([]);
+  const [searchGoodsCategoryValue, setSearchGoodsCategoryValue] = useState('');
 
   useEffect(() => {
     // Fetch suppliers initially
@@ -39,8 +42,27 @@ const Goods: React.FC = () => {
         setFilteredOptions(options); // Initialize filtered options
       }
     };
-
     loadSuppliers();
+  }, []);
+
+  useEffect(() => {
+    // Fetch GoodsCategory initially
+    const loadGoodsCategory = async () => {
+      const { data, success } = await fetchGoodsCategory({ current: 1, pageSize: 10000 }); // Fetch enough data
+      if (success) {
+        // const options = data.map(goodsCategory => ({
+        //   label: goodsCategory.parentCategory/goodsCategory.name,
+        //   value: goodsCategory.id,
+        // }));
+        const options = data.map(goodsCategory => ({
+          label: `${goodsCategory.parentCategory + '/'}${goodsCategory.category + '/'}${goodsCategory.subCategory + '/'}${goodsCategory.name}`,
+          value: goodsCategory.id,
+        }));
+        setGoodsCategoryOptions(options);
+        setFilteredGoodsCategoryOptions(options); // Initialize filtered options
+      }
+    };
+    loadGoodsCategory();
   }, []);
 
   const uploadProps = {
@@ -77,6 +99,14 @@ const Goods: React.FC = () => {
     );
     setFilteredOptions(filterOptions);
   }, [searchValue, supplierOptions]);
+
+  useEffect(() => {
+    // Filter suppliers based on search value
+    const filterGoodsCategoryOptions = GoodsCategoryOptions.filter(option =>
+      option.label.toLowerCase().includes(searchGoodsCategoryValue.toLowerCase())
+    );
+    setFilteredGoodsCategoryOptions(filterGoodsCategoryOptions);
+  }, [searchGoodsCategoryValue, GoodsCategoryOptions]);
 
   /**
    * @en-US Pop-up window of new window
@@ -118,9 +148,19 @@ const Goods: React.FC = () => {
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchgoods.category" defaultMessage="Description" />,
-        dataIndex: 'category',
-        valueType: 'textarea',
+        title: <FormattedMessage id="pages.searchgoods.goodsCategoryId" defaultMessage="Description" />,
+        dataIndex: 'goodsCategory',
+        render: (goodsCategory) => goodsCategory?.name || 'No name',
+        // render: (goodsCategory) => {
+        //   const {
+        //     parentCategory = 'No Parent Category',
+        //     category = 'No Category',
+        //     subCategory = 'No Sub Category',
+        //     name = 'No Name'
+        //   } = goodsCategory || {};
+        
+        //   return `${goodsCategory.parentCategory + '/'}${goodsCategory.category + '/'}${goodsCategory.subCategory + '/'}${goodsCategory.name}`;
+        // }
     },
     {
         title: <FormattedMessage id="pages.searchgoods.picture" defaultMessage="Description" />,
@@ -259,7 +299,7 @@ const Goods: React.FC = () => {
       internalCode: fields.internalCode,
       externalCode: fields.externalCode,
       name: fields.name,
-      category: fields.category,
+      // category: fields.category,
       picture: fields.picture[0].response,
       brand: fields.brand,
       details: fields.details,
@@ -270,6 +310,7 @@ const Goods: React.FC = () => {
       sellingPrice: fields.sellingPrice,
       grossMargin: fields.grossMargin,
       supplierId: fields.supplierId,
+      goodsCategoryId: fields.goodsCategoryId,
       leadTime: fields.leadTime,
       moq: fields.moq,
       remark: fields.remark,
@@ -459,24 +500,34 @@ const Goods: React.FC = () => {
                 },
             ]}
             />
+            <ProFormSelect
+              name="goodsCategoryId"
+              label={<FormattedMessage id="pages.searchgoods.goodsCategoryId" defaultMessage="goodsCategoryId" />}
+              fieldProps={{
+              showSearch: true,
+              filterOption: false, // Disable default filtering
+              onSearch: (value) => setSearchGoodsCategoryValue(value), // Update search value
+              options: filteredGoodsCategoryOptions, // Use filtered options
+              }}
+            />
             <ProFormText
-                name="category"
-                label={intl.formatMessage({
-                    id: 'pages.searchgoods.category',
-                    defaultMessage: '产品分类',
-                })}
-                width="md"
-                rules={[
-                    {
-                    // required: true,
-                    message: (
-                        <FormattedMessage
-                        id="pages.searchgoods.category"
-                        defaultMessage="请输入产品分类"
-                        />
-                    ),
-                    },
-                ]}
+            name="details"
+            label={intl.formatMessage({
+                id: 'pages.searchgoods.details',
+                defaultMessage: '型号/规格/容量/颜色）',
+            })}
+            width="md"
+            rules={[
+                {
+                // required: true,
+                message: (
+                    <FormattedMessage
+                    id="pages.searchgoods.details"
+                    defaultMessage="请输入型号/规格/容量/颜色！"
+                    />
+                ),
+                },
+            ]}
             />
             <ProForm.Item
                 name="picture"
@@ -516,25 +567,6 @@ const Goods: React.FC = () => {
                     <FormattedMessage
                     id="pages.searchgoods.brand"
                     defaultMessage="请输入品牌！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="details"
-            label={intl.formatMessage({
-                id: 'pages.searchgoods.details',
-                defaultMessage: '型号/规格/容量/颜色）',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchgoods.details"
-                    defaultMessage="请输入型号/规格/容量/颜色！"
                     />
                 ),
                 },

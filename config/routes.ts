@@ -63,6 +63,12 @@ export default [
     path: '/goods',
     component: './Goods',
   },
+  {
+    name: 'goodsCategory',
+    icon: 'table',
+    path: '/goodsCategory',
+    component: './GoodsCategory',
+  },
   // {
   //   name: 'client',
   //   icon: 'table',
