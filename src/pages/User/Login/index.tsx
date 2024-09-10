@@ -10,7 +10,7 @@ import {
   WeiboCircleOutlined,
 } from '@ant-design/icons';
 import {
-  LoginForm,
+  LoginFormPage,
   ProFormCaptcha,
   ProFormCheckbox,
   ProFormText,
@@ -51,8 +51,8 @@ const useStyles = createStyles(({ token }) => {
       flexDirection: 'column',
       height: '100vh',
       overflow: 'auto',
-      backgroundImage:
-        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
+      // backgroundImage:
+      //   "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
       backgroundSize: '100% 100%',
     },
   };
@@ -162,14 +162,17 @@ const Login: React.FC = () => {
           padding: '32px 0',
         }}
       >
-        <LoginForm
-          contentStyle={{
-            minWidth: 280,
-            maxWidth: '75vw',
-          }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="订单管理系统"
-          // subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
+        <LoginFormPage
+          backgroundImageUrl="https://mdn.alipayobjects.com/huamei_gcee1x/afts/img/A*y0ZTS6WLwvgAAAAAAAAAAAAADml6AQ/fmt.webp"
+          // backgroundVideoUrl="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
+          // contentStyle={{
+          //   minWidth: 280,
+          //   maxWidth: '75vw',
+          //   backgroundColor: 'white',
+          // }}
+          logo={<img alt="logo" style={{ marginBottom: 20 }} src="/shunwei.png" />}
+          // title="顺为工业科技"
+          // subTitle="订单管理系统"
           initialValues={{
             autoLogin: true,
           }}
@@ -185,7 +188,7 @@ const Login: React.FC = () => {
             await handleSubmit(values as API.LoginParams);
           }}
         >
-          <Tabs
+          {/* <Tabs
             activeKey={type}
             onChange={setType}
             centered
@@ -197,15 +200,15 @@ const Login: React.FC = () => {
                   defaultMessage: '账户密码登录',
                 }),
               },
-              // {
-              //   key: 'mobile',
-              //   label: intl.formatMessage({
-              //     id: 'pages.login.phoneLogin.tab',
-              //     defaultMessage: '手机号登录',
-              //   }),
-              // },
+              {
+                key: 'mobile',
+                label: intl.formatMessage({
+                  id: 'pages.login.phoneLogin.tab',
+                  defaultMessage: '手机号登录',
+                }),
+              },
             ]}
-          />
+          /> */}
 
           {status === 'error' && loginType === 'account' && (
             <LoginMessage
@@ -362,7 +365,7 @@ const Login: React.FC = () => {
               <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
             </a>
           </div> */}
-        </LoginForm>
+        </LoginFormPage>
       </div>
       <Footer />
     </div>
