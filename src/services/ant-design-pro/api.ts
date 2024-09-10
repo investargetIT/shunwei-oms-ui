@@ -369,7 +369,7 @@ export async function updateGoodsCategory(id: string, data: any) {
 
 /** 新建商品品类 POST /goods */
 export async function addGoodsCategory(options?: { [key: string]: any }) {
-  return request<API.GoodsListItem>('/goods', {
+  return request<API.GoodsListItem>('/goods/categories', {
     method: 'POST',
     data:{
       ...(options || {}),
