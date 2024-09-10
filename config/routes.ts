@@ -53,19 +53,19 @@ export default [
   // },
   {
     name: 'supplier',
-    icon: 'table',
+    icon: 'creditCard',
     path: '/supplier',
     component: './Supplier',
   },
   {
     name: 'goodsCategory',
-    icon: 'table',
+    icon: 'apartment',
     path: '/goodsCategory',
     component: './GoodsCategory',
   },
   {
     name: 'goods',
-    icon: 'table',
+    icon: 'container',
     path: '/goods',
     component: './Goods',
   },
