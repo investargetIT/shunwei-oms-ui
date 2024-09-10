@@ -380,7 +380,7 @@ export async function addGoodsCategory(options?: { [key: string]: any }) {
 /** 删除商品品类 DELETE /goods/categories */
 export async function removeGoodsCategory(ids: any) {
   try {
-    const response = await request<API.GoodsListItem>(`/goods/categories`, {
+    const response = await request<API.GoodsListItem>(`/goods/categories/batch`, {
       method: 'DELETE',
       data: {ids},
       headers: {
