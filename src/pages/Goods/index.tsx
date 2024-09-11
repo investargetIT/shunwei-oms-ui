@@ -148,19 +148,24 @@ const Goods: React.FC = () => {
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchgoods.goodsCategoryId" defaultMessage="Description" />,
-        dataIndex: 'goodsCategory',
-        render: (goodsCategory) => goodsCategory?.name || 'No name',
-        // render: (goodsCategory) => {
-        //   const {
-        //     parentCategory = 'No Parent Category',
-        //     category = 'No Category',
-        //     subCategory = 'No Sub Category',
-        //     name = 'No Name'
-        //   } = goodsCategory || {};
-        
-        //   return `${goodsCategory.parentCategory + '/'}${goodsCategory.category + '/'}${goodsCategory.subCategory + '/'}${goodsCategory.name}`;
-        // }
+      title: '大类',
+      dataIndex: ['goodsCategory', 'parentCategory'],
+    },
+    {
+      title: '中类',
+      dataIndex: ['goodsCategory', 'category'],
+    },
+    {
+      title: '小类',
+      dataIndex: ['goodsCategory', 'subCategory'],
+    },
+    {
+      title: '品类',
+      dataIndex: ['goodsCategory', 'name'],
+    },
+    {
+      title: <FormattedMessage id="pages.searchgoods.details" defaultMessage="Description" />,
+      dataIndex: 'details',
     },
     {
         title: <FormattedMessage id="pages.searchgoods.picture" defaultMessage="Description" />,
@@ -174,11 +179,6 @@ const Goods: React.FC = () => {
     {
         title: <FormattedMessage id="pages.searchgoods.brand" defaultMessage="Description" />,
         dataIndex: 'brand',
-        valueType: 'textarea',
-    },
-    {
-        title: <FormattedMessage id="pages.searchgoods.details" defaultMessage="Description" />,
-        dataIndex: 'details',
         valueType: 'textarea',
     },
     {
