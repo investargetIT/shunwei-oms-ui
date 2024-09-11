@@ -180,23 +180,37 @@ declare namespace API {
     success?: boolean;
   };
 
-  type ClientListItem = {
+  type CustomerListItem = {
     id?: string;
     code?: string;
     name?: string;
+    province?: string;
+    city?: string;
+    district?: string;
     address?: string;
     contact?: string;
     telephone?: string;
     status?: string;
     brand?: string;
     attribute?: string;
+    invoiceType?: string;
+    invoiceTitle?: string;
+    invoiceTitleTin?: string;
+    invoiceTitleAddress?: string;
+    invoiceTitleBank?: string;
+    invoiceTitleBankAccount?: string;
+    invoiceTitleTelephone?: string;
+    invoiceReceiver?: string;
+    invoiceReceiverTel?: string;
+    invoiceReceiverAddress?: string;
+    invoiceReceiverEmail?: string;
     remark?: string;
     createdAt?: string;
     updatedAt?: string;
   };
 
-  type ClientList = {
-    data?: ClientListItem[];
+  type CustomerList = {
+    data?: CustomerListItem[];
     /** 列表的内容总数 */
     total?: number;
     success?: boolean;

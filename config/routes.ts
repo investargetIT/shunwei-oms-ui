@@ -69,12 +69,12 @@ export default [
     path: '/goods',
     component: './Goods',
   },
-  // {
-  //   name: 'client',
-  //   icon: 'table',
-  //   path: '/client',
-  //   component: './Client',
-  // },
+  {
+    name: 'customer',
+    icon: 'table',
+    path: '/customer',
+    component: './Customer',
+  },
   {
     path: '/',
     redirect: '/supplier',

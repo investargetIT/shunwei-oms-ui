@@ -369,7 +369,7 @@ export async function updateGoodsCategory(id: string, data: any) {
 
 /** 新建商品品类 POST /goods */
 export async function addGoodsCategory(options?: { [key: string]: any }) {
-  return request<API.GoodsListItem>('/goods/categories', {
+  return request<API.GoodsCategoryItem>('/goods/categories', {
     method: 'POST',
     data:{
       ...(options || {}),
@@ -380,7 +380,7 @@ export async function addGoodsCategory(options?: { [key: string]: any }) {
 /** 删除商品品类 DELETE /goods/categories */
 export async function removeGoodsCategory(ids: any) {
   try {
-    const response = await request<API.GoodsListItem>(`/goods/categories/batch`, {
+    const response = await request<API.GoodsCategoryItem>(`/goods/categories/batch`, {
       method: 'DELETE',
       data: {ids},
       headers: {
@@ -391,6 +391,79 @@ export async function removeGoodsCategory(ids: any) {
     return response;
   } catch (error) {
     console.error('Failed to delete goodsCategory:', error);
+    throw error;
+  }
+}
+
+/** 获取客户信息 GET /customers/search */
+export async function customer(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+  try {
+    const response = await request('/customers/search', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,   // Map to 'page'
+        size: pageSize,  // Map to 'size'
+      },
+    });
+    return {
+      data: response.data.content,
+      total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
+/** 更新客户信息 PUT /customers */
+export async function updateCustomer(id: string, data: any) {
+  try {
+    const response = await request<API.CustomerListItem>(`/customers/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+      data,
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to update customer:', error);
+    throw error;
+  }
+}
+
+
+/** 新建客户信息 POST /customers */
+export async function addCustomer(options?: { [key: string]: any }) {
+  return request<API.CustomerListItem>('/customers', {
+    method: 'POST',
+    data:{
+      ...(options || {}),
+    }
+  });
+}
+
+/** 删除客户信息 DELETE /customers/batch */
+export async function removeCustomer(ids: any) {
+  try {
+    const response = await request<API.CustomerListItem>(`/customers/batch`, {
+      method: 'DELETE',
+      data: {ids},
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to delete customer:', error);
     throw error;
   }
 }

@@ -50,7 +50,7 @@ export default {
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
   'menu.supplier': '供应商管理',
-  'menu.goods': '商品管理',
-  'menu.client': '客户管理',
   'menu.goodsCategory': '品类管理',
+  'menu.goods': '商品管理',
+  'menu.customer': '客户管理',
 };
