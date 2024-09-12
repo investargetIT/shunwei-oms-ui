@@ -76,6 +76,12 @@ export default [
     component: './Customer',
   },
   {
+    name: 'order',
+    icon: 'table',
+    path: '/order',
+    component: './Order',
+  },
+  {
     path: '/',
     redirect: '/supplier',
   },
