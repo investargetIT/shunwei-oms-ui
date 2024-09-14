@@ -215,4 +215,56 @@ declare namespace API {
     total?: number;
     success?: boolean;
   };
+
+  type OrdersListItem = {
+    id?: string;
+    code?: string;
+    type?: string;
+    goods?: string;
+    deliveryNo?: string;
+    deliveryNoRow?: string;
+    invoiceName?: string;
+    num?: string;
+    purchaseMultiple?: string;
+    taxRate?: string;
+    priceWithoutTax?: string;
+    price?: string;
+    amountBeforeDiscount?: string;
+    discount?: string;
+    totalAmountWithoutTax?: string;
+    totalAmount?: string;
+    discountName?: string;
+    discountType?: string;
+    status?: string;
+    receiveTime?: string;
+    reviewStatus?: string;
+    reviewTime?: string;
+    returnReceiveTime?: string;
+    customer?: string;
+    createTime?: string;
+    takeTime?: string;
+    deliveryTime?: string;
+    signatureTime?: string;
+    remark?: string;
+    commissionRate?: string;
+    commission?: string;
+    paymentMethod?: string;
+    onlinePaymentTransactionNo?: string;
+    offlinePaymentBankInfo?: string;
+    platformPaymentStatus?: string;
+    vmiPaymentStatus?: string;
+    isGsudaDelivery?: string;
+    shippingWarehouseType?: string;
+    services?: string;
+    servicePriceAdjust?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type OrdersList = {
+    data?: OrdersListItem[];
+    /** 列表的内容总数 */
+    total?: number;
+    success?: boolean;
+  };
 }

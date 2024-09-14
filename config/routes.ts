@@ -76,10 +76,10 @@ export default [
     component: './Customer',
   },
   {
-    name: 'order',
+    name: 'orders',
     icon: 'table',
-    path: '/order',
-    component: './Order',
+    path: '/orders',
+    component: './Orders',
   },
   {
     path: '/',

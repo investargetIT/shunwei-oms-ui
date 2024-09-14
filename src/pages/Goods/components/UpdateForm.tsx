@@ -65,7 +65,7 @@
     useEffect(() => {
       // Fetch suppliers initially
       const loadSuppliers = async () => {
-        const { data, success } = await fetchSuppliers({ current: 1, pageSize: 1000 }); // Adjust pageSize as needed
+        const { data, success } = await fetchSuppliers({ current: 1, pageSize: 10000 }); // Adjust pageSize as needed
         if (success) {
           const options = data.map(supplier => ({
             label: supplier.name,
@@ -339,7 +339,7 @@
             name="details"
             label={intl.formatMessage({
               id: 'pages.searchgoods.details',
-              defaultMessage: '型号/规格/容量/颜色）',
+              defaultMessage: '型号/规格/容量/颜色',
             })}
             width="md"
             rules={[
@@ -604,30 +604,30 @@
           //   },
           // ]}
         />
-          <ProFormTextArea
-            name="remark"
-            width="md"
-            label={intl.formatMessage({
-              id: 'pages.searchgoods.remark',
-              defaultMessage: '备注',
-            })}
-            // placeholder={intl.formatMessage({
-            //   id: 'pages.searchgoods.remark',
-            //   defaultMessage: '请输入备注！',
-            // })}
-            rules={[
-              {
-                // required: true,
-                message: (
-                  <FormattedMessage
-                    id="pages.searchgoods.remark"
-                    defaultMessage="请输入备注！"
-                  />
-                ),
-                // min: 5,
-              },
-            ]}
-          />
+        <ProFormTextArea
+          name="remark"
+          width="md"
+          label={intl.formatMessage({
+            id: 'pages.searchgoods.remark',
+            defaultMessage: '备注',
+          })}
+          // placeholder={intl.formatMessage({
+          //   id: 'pages.searchgoods.remark',
+          //   defaultMessage: '请输入备注！',
+          // })}
+          rules={[
+            {
+              // required: true,
+              message: (
+                <FormattedMessage
+                  id="pages.searchgoods.remark"
+                  defaultMessage="请输入备注！"
+                />
+              ),
+              // min: 5,
+            },
+          ]}
+        />
         </StepsForm.StepForm>
       </StepsForm>
     );

@@ -32,7 +32,7 @@ const Goods: React.FC = () => {
   useEffect(() => {
     // Fetch suppliers initially
     const loadSuppliers = async () => {
-      const { data, success } = await fetchSuppliers({ current: 1, pageSize: 1000 }); // Fetch enough data
+      const { data, success } = await fetchSuppliers({ current: 1, pageSize: 10000 }); // Fetch enough data
       if (success) {
         const options = data.map(supplier => ({
           label: supplier.name,
@@ -514,7 +514,7 @@ const Goods: React.FC = () => {
             name="details"
             label={intl.formatMessage({
                 id: 'pages.searchgoods.details',
-                defaultMessage: '型号/规格/容量/颜色）',
+                defaultMessage: '型号/规格/容量/颜色',
             })}
             width="md"
             rules={[

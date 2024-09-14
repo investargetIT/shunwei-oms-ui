@@ -53,5 +53,5 @@ export default {
   'menu.goodsCategory': '品类管理',
   'menu.goods': '商品管理',
   'menu.customer': '客户管理',
-  'menu.order': '订单管理',
+  'menu.orders': '订单管理',
 };
