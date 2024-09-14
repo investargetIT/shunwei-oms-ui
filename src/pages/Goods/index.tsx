@@ -240,6 +240,7 @@ const Goods: React.FC = () => {
       render: (_, record) => [
         <a
           key="config"
+          className="colortext"
           onClick={() => {
             handleUpdateModalOpen(true);
             setCurrentRow(record);
@@ -250,6 +251,7 @@ const Goods: React.FC = () => {
         !showDetail && ( // Check if detail view is not open
             <a
               key="details"
+              className="colortext"
               onClick={() => {
                 setCurrentRow(record);   // Sets the current row to show details
                 setShowDetail(true);     // Displays the details view

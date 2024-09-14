@@ -149,6 +149,7 @@ const Supplier: React.FC = () => {
       render: (_, record) => [
         <a
           key="config"
+          className="colortext"
           onClick={() => {
             handleUpdateModalOpen(true);
             setCurrentRow(record);
@@ -158,6 +159,7 @@ const Supplier: React.FC = () => {
         </a>,
         !showDetail && (
             <a
+            className="colortext"
             onClick={() => {
               setCurrentRow(record);
               setShowDetail(true);
