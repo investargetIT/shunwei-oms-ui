@@ -241,6 +241,38 @@ export async function goods(params: API.PageParams) {
   }
 }
 
+/** 获取商品部分信息 GET /goods/search */
+export async function fetchGoods(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+  try {
+    const response = await request('/goods/search', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,
+        size: pageSize,
+      },
+    });
+    const formattedData = response.data.content.map(goods => ({
+      id: goods.id,
+      name: goods.name,
+      // goodsCategoryName: goods.goodsCategory && goods.goodsCategory.name, // 如果为空使用默认值
+    }));
+    return {
+      data: formattedData,
+      total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error fetching goods:', error);
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
 /** 更新商品 PUT /goods */
 export async function updateGoods(id: string, data: any) {
   try {
@@ -413,6 +445,37 @@ export async function customer(params: API.PageParams) {
       success: true,
     };
   } catch (error) {
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
+/** 获取客户部分信息 GET /customers/search */
+export async function fetchCustomer(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+  try {
+    const response = await request('/customers/search', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,
+        size: pageSize,
+      },
+    });
+    const formattedData = response.data.content.map(customers => ({
+      id: customers.id,
+      name: customers.name,
+    }));
+    return {
+      data: formattedData,
+      total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error fetching customers:', error);
     return {
       data: [],
       total: 0,

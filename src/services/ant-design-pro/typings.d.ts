@@ -220,7 +220,7 @@ declare namespace API {
     id?: string;
     code?: string;
     type?: string;
-    goods?: string;
+    goodsId?: string;
     deliveryNo?: string;
     deliveryNoRow?: string;
     invoiceName?: string;
@@ -240,7 +240,7 @@ declare namespace API {
     reviewStatus?: string;
     reviewTime?: string;
     returnReceiveTime?: string;
-    customer?: string;
+    customerId?: string;
     createTime?: string;
     takeTime?: string;
     deliveryTime?: string;

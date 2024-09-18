@@ -1,4 +1,4 @@
-import { addGoods, removeGoods, goods, updateGoods, fetchSuppliers, fileUpload, fetchGoodsCategory } from '@/services/ant-design-pro/api';
+import { addOrder, removeOrder, order, updateOrder, fetchCustomer, fetchGoods } from '@/services/ant-design-pro/api';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
@@ -21,92 +21,62 @@ import type { FormValueType } from './components/UpdateForm.tsx';
 import UpdateForm from './components/UpdateForm.tsx';
 
 const Orders: React.FC = () => {
-  const [supplierOptions, setSupplierOptions] = useState([]);
+  const [customerOptions, setCustomerOptions] = useState([]);
   const [filteredOptions, setFilteredOptions] = useState([]);
   const [initialValues, setInitialValues] = useState({});
   const [searchValue, setSearchValue] = useState('');
-  const [GoodsCategoryOptions, setGoodsCategoryOptions] = useState([]);
-  const [filteredGoodsCategoryOptions, setFilteredGoodsCategoryOptions] = useState([]);
-  const [searchGoodsCategoryValue, setSearchGoodsCategoryValue] = useState('');
+  const [goodsOptions, setGoodsOptions] = useState([]);
+  const [filteredGoodsOptions, setFilteredGoodsOptions] = useState([]);
+  const [searchGoodsValue, setSearchGoodsValue] = useState('');
 
   useEffect(() => {
-    // Fetch suppliers initially
-    const loadSuppliers = async () => {
-      const { data, success } = await fetchSuppliers({ current: 1, pageSize: 10000 }); // Fetch enough data
+    // Fetch Customer initially
+    const loadCustomer = async () => {
+      const { data, success } = await fetchCustomer({ current: 1, pageSize: 10000 }); // Fetch enough data
       if (success) {
-        const options = data.map(supplier => ({
-          label: supplier.name,
-          value: supplier.id,
+        const options = data.map(customer => ({
+          label: customer.name,
+          value: customer.id,
         }));
-        setSupplierOptions(options);
+        setCustomerOptions(options);
         setFilteredOptions(options); // Initialize filtered options
       }
     };
-    loadSuppliers();
+    loadCustomer();
   }, []);
 
   useEffect(() => {
-    // Fetch GoodsCategory initially
-    const loadGoodsCategory = async () => {
-      const { data, success } = await fetchGoodsCategory({ current: 1, pageSize: 10000 }); // Fetch enough data
+    // Fetch Goods initially
+    const loadGoods = async () => {
+      const { data, success } = await fetchGoods({ current: 1, pageSize: 10000 }); // Fetch enough data
       if (success) {
-        // const options = data.map(goodsCategory => ({
-        //   label: goodsCategory.parentCategory/goodsCategory.name,
-        //   value: goodsCategory.id,
-        // }));
-        const options = data.map(goodsCategory => ({
-          label: `${goodsCategory.parentCategory + '/'}${goodsCategory.category + '/'}${goodsCategory.subCategory + '/'}${goodsCategory.name}`,
-          value: goodsCategory.id,
+        const options = data.map(goods => ({
+          label: goods.name,
+        //   label: goods.goodsCategoryName? `${goods.name}/${goods.goodsCategoryName}`: goods.name,
+          value: goods.id,
         }));
-        setGoodsCategoryOptions(options);
-        setFilteredGoodsCategoryOptions(options); // Initialize filtered options
+        setGoodsOptions(options);
+        setFilteredGoodsOptions(options); // Initialize filtered options
       }
     };
-    loadGoodsCategory();
+    loadGoods();
   }, []);
 
-  const uploadProps = {
-    customRequest: async ({ file, onSuccess, onError }) => {
-        try {
-            // Create FormData to send file and additional info if needed
-            // const fileNameWithExt = file.name;
-            // const fileNameWithoutExt = fileNameWithExt.substring(0, fileNameWithExt.lastIndexOf('.')) || fileNameWithExt;
-            // const filename = fileNameWithoutExt;
-            const filename = file.name;
-            // Call your fileUpload function
-            const response = await fileUpload({filename,file});
-            // console.log(response.data.fileUrl)
-            if (response.status) {
-                onSuccess(response.data.fileUrl, file); // Notify upload success
-                message.success(`${file.name} file uploaded successfully`);
-            } else {
-                onError(new Error('Upload failed.'));
-                message.error('File upload failed.');
-            }
-        } catch (error) {
-            onError(error); // Notify upload failure
-            message.error('File upload failed.');
-        }
-    },
-    listType: 'picture',
-    maxCount: 1,
-  };
-
   useEffect(() => {
-    // Filter suppliers based on search value
-    const filterOptions = supplierOptions.filter(option =>
+    // Filter customer based on search value
+    const filterOptions = customerOptions.filter(option =>
       option.label.toLowerCase().includes(searchValue.toLowerCase())
     );
     setFilteredOptions(filterOptions);
-  }, [searchValue, supplierOptions]);
+  }, [searchValue, customerOptions]);
 
   useEffect(() => {
-    // Filter suppliers based on search value
-    const filterGoodsCategoryOptions = GoodsCategoryOptions.filter(option =>
-      option.label.toLowerCase().includes(searchGoodsCategoryValue.toLowerCase())
+    // Filter goods based on search value
+    const filterGoodsOptions = goodsOptions.filter(option =>
+      option.label.toLowerCase().includes(searchGoodsValue.toLowerCase())
     );
-    setFilteredGoodsCategoryOptions(filterGoodsCategoryOptions);
-  }, [searchGoodsCategoryValue, GoodsCategoryOptions]);
+    setFilteredGoodsOptions(filterGoodsOptions);
+  }, [searchGoodsValue, goodsOptions]);
 
   /**
    * @en-US Pop-up window of new window
@@ -122,8 +92,8 @@ const Orders: React.FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.GoodsListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.GoodsListItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.OrdersListItem>();
+  const [selectedRowsState, setSelectedRows] = useState<API.OrdersListItem[]>([]);
 
   /**
    * @en-US International configuration
@@ -131,7 +101,7 @@ const Orders: React.FC = () => {
    * */
   const intl = useIntl();
 
-  const columns: ProColumns<API.GoodsListItem>[] = [
+  const columns: ProColumns<API.OrdersListItem>[] = [
     {
       title: <FormattedMessage id="pages.searchorders.code" defaultMessage="Description" />,
       dataIndex: 'code',
@@ -143,36 +113,30 @@ const Orders: React.FC = () => {
       valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.goods" defaultMessage="Description" />,
-        dataIndex: 'goods',
+        title: <FormattedMessage id="pages.searchorders.goodsId" defaultMessage="Description" />,
+        dataIndex:  ['goods', 'name'],
         valueType: 'textarea',
     },
-    // {
-    //   title: '大类',
-    //   dataIndex: ['goodsCategory', 'parentCategory'],
-    // },
-    // {
-    //   title: '中类',
-    //   dataIndex: ['goodsCategory', 'category'],
-    // },
-    // {
-    //   title: '小类',
-    //   dataIndex: ['goodsCategory', 'subCategory'],
-    // },
-    // {
-    //   title: '品类',
-    //   dataIndex: ['goodsCategory', 'name'],
-    // },
-    // {
-    //   title: <FormattedMessage id="pages.searchorders.goodsCategory" defaultMessage="Description" />,
-    //   dataIndex: 'goodsCategory',
-    //   valueType: 'textarea',
-    // },
-    // {
-    //   title: <FormattedMessage id="pages.searchorders.supplier" defaultMessage="Description" />,
-    //   dataIndex: 'supplier',
-    //   valueType: 'textarea',
-    // },
+    {
+      title: '大类',
+      dataIndex: ['goods','goodsCategory', 'parentCategory'],
+    },
+    {
+      title: '中类',
+      dataIndex: ['goods','goodsCategory', 'category'],
+    },
+    {
+      title: '小类',
+      dataIndex: ['goods','goodsCategory', 'subCategory'],
+    },
+    {
+      title: '品类',
+      dataIndex: ['goods','goodsCategory', 'name'],
+    },
+    {
+      title: '供应商',
+      dataIndex: ['goods','supplier', 'name'],
+    },
     {
       title: <FormattedMessage id="pages.searchorders.deliveryNo" defaultMessage="Description" />,
       dataIndex: 'deliveryNo',
@@ -278,8 +242,8 @@ const Orders: React.FC = () => {
         valueType: 'dateTime',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.customer" defaultMessage="Description" />,
-        dataIndex: 'customer',
+        title: <FormattedMessage id="pages.searchorders.customerId" defaultMessage="Description" />,
+        dataIndex:  ['customer', 'name'],
         valueType: 'textarea',
     },
     {
@@ -344,7 +308,12 @@ const Orders: React.FC = () => {
     {
         title: <FormattedMessage id="pages.searchorders.isGsudaDelivery" defaultMessage="Description" />,
         dataIndex: 'isGsudaDelivery',
-        valueType: 'textarea',
+        valueType: 'select',
+        render: (text) => text ? '是' : '否',
+        valueEnum: {
+            true: '是',
+            false: '否',
+          },
     },
     {
         title: <FormattedMessage id="pages.searchorders.shippingWarehouseType" defaultMessage="Description" />,
@@ -373,6 +342,7 @@ const Orders: React.FC = () => {
       render: (_, record) => [
         <a
           key="config"
+          className="colortext"
           onClick={() => {
             handleUpdateModalOpen(true);
             setCurrentRow(record);
@@ -383,6 +353,7 @@ const Orders: React.FC = () => {
         !showDetail && ( // Check if detail view is not open
             <a
               key="details"
+              className="colortext"
               onClick={() => {
                 setCurrentRow(record);   // Sets the current row to show details
                 setShowDetail(true);     // Displays the details view
@@ -400,14 +371,11 @@ const Orders: React.FC = () => {
  * @zh-CN 添加节点
  * @param fields
  */
-  const handleAdd = async (fields: API.GoodsListItem) => {
+  const handleAdd = async (fields: API.OrdersListItem) => {
     const hide = message.loading('正在添加');
-    // Extract the URL from the picture field
-    const picture = fields.picture[0].response; // URL of the uploaded picture
-    // Use the URL as needed, e.g., save it to the database or display it
-    fields.picture = picture;
+    console.log(fields)
     try {
-      await addGoods({ ...fields });
+      await addOrder({ ...fields });
       hide();
       message.success('Added successfully');
       return true;
@@ -431,7 +399,7 @@ const Orders: React.FC = () => {
       id: fields.id,
       code: fields.code,
       type: fields.type,
-      goods: fields.goods,
+      goodsId: fields.goodsId,
       deliveryNo: fields.deliveryNo,
       deliveryNoRow: fields.deliveryNoRow,
       invoiceName: fields.invoiceName,
@@ -451,7 +419,7 @@ const Orders: React.FC = () => {
       reviewStatus: fields.reviewStatus,
       reviewTime: fields.reviewTime,
       returnReceiveTime: fields.returnReceiveTime,
-      customer: fields.customer,
+      customerId: fields.customerId,
       createTime: fields.createTime,
       takeTime: fields.takeTime,
       deliveryTime: fields.deliveryTime,
@@ -470,7 +438,7 @@ const Orders: React.FC = () => {
       remark: fields.remark,
     }
     try {
-      await updateGoods(id, values);
+      await updateOrder(id, values);
       hide();
       message.success('Configuration is successful');
       return true;
@@ -487,7 +455,7 @@ const Orders: React.FC = () => {
   *
   * @param selectedRows
   */
-  const handleRemove = async (selectedRows: API.GoodsListItem[]) => {
+  const handleRemove = async (selectedRows: API.OrdersListItem[]) => {
     Modal.confirm({
       title: <FormattedMessage id="pages.searchorders.deleteConfirmTitle" defaultMessage="确认删除" />,
       content: <FormattedMessage id="pages.searchorders.deleteConfirmContent" defaultMessage="确定要删除吗？" />,
@@ -498,7 +466,7 @@ const Orders: React.FC = () => {
         if (!selectedRows) return true;
         const ids = selectedRows.map((row) => row.id);
         try {
-          await removeGoods(ids);
+          await removeOrder(ids);
           hide();
           message.success('删除成功');
           setSelectedRows([]);
@@ -515,7 +483,7 @@ const Orders: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.GoodsListItem, API.PageParams>
+      <ProTable<API.OrdersListItem, API.PageParams>
         headerTitle={intl.formatMessage({
           id: 'pages.searchorders.title',
           defaultMessage: 'Enquiry form',
@@ -537,7 +505,7 @@ const Orders: React.FC = () => {
             <PlusOutlined /> <FormattedMessage id="pages.searchorders.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={goods}
+        request={order}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -579,7 +547,7 @@ const Orders: React.FC = () => {
           </Button> */}
         </FooterToolbar>
       )}
-        <ModalForm
+        {createModalOpen &&( <ModalForm
             title={intl.formatMessage({
             id: 'pages.searchorders.createForm.newInfo',
             defaultMessage: '新建信息',
@@ -588,7 +556,7 @@ const Orders: React.FC = () => {
             open={createModalOpen}
             onOpenChange={handleModalOpen}
             onFinish={async (value) => {
-            const success = await handleAdd(value as API.GoodsListItem);
+            const success = await handleAdd(value as API.OrdersListItem);
             if (success) {
                 handleModalOpen(false);
                 if (actionRef.current) {
@@ -625,7 +593,7 @@ const Orders: React.FC = () => {
             width="md"
             rules={[
                 {
-                required: true,
+                // required: true,
                 message: (
                     <FormattedMessage
                     id="pages.searchorders.type"
@@ -636,14 +604,20 @@ const Orders: React.FC = () => {
             ]}
             />
             <ProFormSelect
-              name="goods"
-              label={<FormattedMessage id="pages.searchorders.goods" defaultMessage="goods" />}
+              name="goodsId"
+              label={<FormattedMessage id="pages.searchorders.goodsId" defaultMessage="goodsId" />}
               fieldProps={{
               showSearch: true,
               filterOption: false, // Disable default filtering
-              onSearch: (value) => setSearchGoodsCategoryValue(value), // Update search value
-              options: filteredGoodsCategoryOptions, // Use filtered options
+              onSearch: (value) => setSearchGoodsValue(value), // Update search value
+              options: filteredGoodsOptions, // Use filtered options
               }}
+              rules={[{ required: true, message: (
+                  <FormattedMessage
+                      id="pages.searchorders.goodsId"
+                      defaultMessage="请选择商品！"
+                  />
+              )}]}
             />
             <ProFormText
             name="deliveryNo"
@@ -928,7 +902,7 @@ const Orders: React.FC = () => {
                 width="md"
                 fieldProps={{
                     showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DD HH:mm:ss',
+                    format: 'YYYY-MM-DDTHH:mm:ss',
                 }}
                 label={intl.formatMessage({
                 id: 'pages.searchorders.reviewTime',
@@ -968,7 +942,7 @@ const Orders: React.FC = () => {
                 width="md"
                 fieldProps={{
                     showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DD HH:mm:ss',
+                    format: 'YYYY-MM-DDTHH:mm:ss',
                 }}
                 label={intl.formatMessage({
                     id: 'pages.searchorders.receiveTime',
@@ -990,7 +964,7 @@ const Orders: React.FC = () => {
                 width="md"
                 fieldProps={{
                     showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DD HH:mm:ss',
+                    format: 'YYYY-MM-DDTHH:mm:ss',
                 }}
                 label={intl.formatMessage({
                 id: 'pages.searchorders.returnReceiveTime',
@@ -1007,30 +981,28 @@ const Orders: React.FC = () => {
                 //   },
                 // ]}
             />
-            <ProFormText
-            name="customer"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.customer',
-                defaultMessage: '客户',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.customer"
+            <ProFormSelect
+              name="customerId"
+              label={<FormattedMessage id="pages.searchorders.customerId" defaultMessage="customerId" />}
+              fieldProps={{
+              showSearch: true,
+              filterOption: false, // Disable default filtering
+              onSearch: (value) => setSearchValue(value), // Update search value
+              options: filteredOptions, // Use filtered options
+              }}
+              rules={[{ required: true, message: (
+                <FormattedMessage
+                    id="pages.searchorders.customerId"
                     defaultMessage="请选择客户！"
-                    />
-                ),
-                },
-            ]}
+                />
+            )}]}
             />
             <ProFormDatePicker
                 name="createTime"
                 width="md"
                 fieldProps={{
                     showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DD HH:mm:ss',
+                    format: 'YYYY-MM-DDTHH:mm:ss',
                 }}
                 label={intl.formatMessage({
                 id: 'pages.searchorders.createTime',
@@ -1052,7 +1024,7 @@ const Orders: React.FC = () => {
                 width="md"
                 fieldProps={{
                     showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DD HH:mm:ss',
+                    format: 'YYYY-MM-DDTHH:mm:ss',
                 }}
                 label={intl.formatMessage({
                 id: 'pages.searchorders.takeTime',
@@ -1074,7 +1046,7 @@ const Orders: React.FC = () => {
                 width="md"
                 fieldProps={{
                     showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DD HH:mm:ss',
+                    format: 'YYYY-MM-DDTHH:mm:ss',
                 }}
                 label={intl.formatMessage({
                 id: 'pages.searchorders.deliveryTime',
@@ -1096,7 +1068,7 @@ const Orders: React.FC = () => {
                 width="md"
                 fieldProps={{
                     showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DD HH:mm:ss',
+                    format: 'YYYY-MM-DDTHH:mm:ss',
                 }}
                 label={intl.formatMessage({
                 id: 'pages.searchorders.signatureTime',
@@ -1239,23 +1211,17 @@ const Orders: React.FC = () => {
                 },
             ]}
             />
-            <ProFormText
-            name="isGsudaDelivery"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.isGsudaDelivery',
-                defaultMessage: 'G速达配送',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.isGsudaDelivery"
-                    defaultMessage="请选择G速达配送！"
-                    />
-                ),
-                },
-            ]}
+            <ProFormSelect
+                name="isGsudaDelivery"
+                label={intl.formatMessage({
+                    id: 'pages.searchorders.isGsudaDelivery',
+                    defaultMessage: 'G速达配送',
+                })}
+                width="md"
+                valueEnum={{
+                    true: '是',
+                    false: '否',
+                }}
             />
             <ProFormText
             name="shippingWarehouseType"
@@ -1336,6 +1302,7 @@ const Orders: React.FC = () => {
             ]}
             />
         </ModalForm>
+        )}
       {currentRow && (
         <UpdateForm
           onSubmit={async (value) => {
@@ -1367,17 +1334,17 @@ const Orders: React.FC = () => {
             }}
             closable={false}
         >
-            {currentRow?.name && (
-            <ProDescriptions<API.GoodsListItem>
+            {currentRow?.code && (
+            <ProDescriptions<API.OrdersListItem>
                 column={2}
-                title={currentRow?.name}
+                title={currentRow?.code}
                 request={async () => ({
                 data: currentRow || {},
                 })}
                 params={{
-                id: currentRow?.name,
+                id: currentRow?.code,
                 }}
-                columns={columns as ProDescriptionsItemProps<API.GoodsListItem>[]}
+                columns={columns as ProDescriptionsItemProps<API.OrdersListItem>[]}
             />
             )}
         </Drawer>

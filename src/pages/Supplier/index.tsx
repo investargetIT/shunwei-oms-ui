@@ -498,7 +498,7 @@ const Supplier: React.FC = () => {
               '终止合作': '终止合作',
             }}
           />
-        <ProFormText
+          <ProFormText
             name="contact"
             label={intl.formatMessage({
               id: 'pages.searchsupplier.updateForm.contact',

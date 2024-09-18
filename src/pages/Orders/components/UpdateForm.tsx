@@ -1,4 +1,4 @@
-import { fetchSuppliers,fileUpload,fetchGoodsCategory } from '@/services/ant-design-pro/api';
+import { fetchCustomer, fetchGoods } from '@/services/ant-design-pro/api';
 import {
   ProFormDateTimePicker,
   ProFormDatePicker,
@@ -14,13 +14,12 @@ import {
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { Modal,Input,Upload,Button,message,InputNumber } from 'antd';
 import React, {useEffect, useState, useRef } from 'react';
-import { UploadOutlined } from '@ant-design/icons';
 
 export type FormValueType = {
-  id?: string;
+    id?: string;
     code?: string;
     type?: string;
-    goods?: string;
+    goodsId?: string;
     deliveryNo?: string;
     deliveryNoRow?: string;
     invoiceName?: string;
@@ -40,7 +39,7 @@ export type FormValueType = {
     reviewStatus?: string;
     reviewTime?: string;
     returnReceiveTime?: string;
-    customer?: string;
+    customerId?: string;
     createTime?: string;
     takeTime?: string;
     deliveryTime?: string;
@@ -67,98 +66,72 @@ export type UpdateFormProps = {
 };
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
-  const [supplierOptions, setSupplierOptions] = useState([]);
-  const [filteredOptions, setFilteredOptions] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
-  const [GoodsCategoryOptions, setGoodsCategoryOptions] = useState([]);
-  const [filteredGoodsCategoryOptions, setFilteredGoodsCategoryOptions] = useState([]);
-  const [searchGoodsCategoryValue, setSearchGoodsCategoryValue] = useState('');
+  const [customerOptions, setCustomerOptions] = useState([]);
+  const [filteredCustomerOptions, setFilteredCustomerOptions] = useState([]);
+  const [initialValues, setInitialValues] = useState({});
+  const [searchCustomerValue, setSearchCustomerValue] = useState('');
+  const [goodsOptions, setGoodsOptions] = useState([]);
+  const [filteredGoodsOptions, setFilteredGoodsOptions] = useState([]);
+  const [searchGoodsValue, setSearchGoodsValue] = useState('');
   // 从 props 中提取数据
-  const { supplier, leadTime, moq, remark, picture, goodsCategory } = props.values;
+  const { goods, customer, isGsudaDelivery } = props.values;
 
-  // 提取 supplier 对象中的 id 和 name
-  const supplierId = supplier?.id;
-  const supplierName = supplier?.name;
-  const goodsCategoryId = goodsCategory?.id;
-  const goodsCategoryName = goodsCategory?.name;
+  // 提取 商品和客户 对象中的 id 和 name
+  const goodsId = goods?.id;
+  const goodsName = goods?.name;
+  const customerId = customer?.id;
+  const customerName = customer?.name;
+  const isGsudaDeliverys = isGsudaDelivery?'true' : 'false';
 
   useEffect(() => {
-    // Fetch suppliers initially
-    const loadSuppliers = async () => {
-      const { data, success } = await fetchSuppliers({ current: 1, pageSize: 1000 }); // Adjust pageSize as needed
+    // Fetch Customer initially
+    const loadCustomer = async () => {
+      const { data, success } = await fetchCustomer({ current: 1, pageSize: 10000 }); // Fetch enough data
       if (success) {
-        const options = data.map(supplier => ({
-          label: supplier.name,
-          value: supplier.id, // Ensure this is a number
+        const options = data.map(customer => ({
+          label: customer.name,
+          value: customer.id,
         }));
-        setSupplierOptions(options);
-        setFilteredOptions(options); // Initialize filtered options
+        setCustomerOptions(options);
+        setFilteredCustomerOptions(options); // Initialize filtered options
       }
     };
-    loadSuppliers();
+    loadCustomer();
   }, []);
 
   useEffect(() => {
-    // Fetch suppliers initially
-    const loadGoodsCategory = async () => {
-      const { data, success } = await fetchGoodsCategory({ current: 1, pageSize: 10000 }); // Fetch enough data
+    // Fetch Goods initially
+    const loadGoods = async () => {
+      const { data, success } = await fetchGoods({ current: 1, pageSize: 10000 }); // Fetch enough data
       if (success) {
-        // const options = data.map(goodsCategory => ({
-        //   label: goodsCategory.name,
-        //   value: goodsCategory.id,
-        // }));
-        const options = data.map(goodsCategory => ({
-          label: `${goodsCategory.parentCategory + '/'}${goodsCategory.category + '/'}${goodsCategory.subCategory + '/'}${goodsCategory.name}`,
-          value: goodsCategory.id,
+        const options = data.map(goods => ({
+          label: goods.name,
+        //   label: goods.goodsCategoryName? `${goods.name}/${goods.goodsCategoryName}`: goods.name,
+          value: goods.id,
         }));
-        setGoodsCategoryOptions(options);
-        setFilteredGoodsCategoryOptions(options); // Initialize filtered options
+        setGoodsOptions(options);
+        setFilteredGoodsOptions(options); // Initialize filtered options
       }
     };
-    loadGoodsCategory();
+    loadGoods();
   }, []);
 
-  const uploadProps = {
-    customRequest: async ({ file, onSuccess, onError }) => {
-      try {
-        const filename = file.name;
-          // Call your fileUpload function
-        const response = await fileUpload({filename,file});
-        if (response && response.data && response.data.fileUrl) {
-          onSuccess(response.data.fileUrl, file);
-          message.success(`${file.name} file uploaded successfully`);
-        } else {
-          onError(new Error('Upload failed.'));
-          message.error('File upload failed.');
-        }
-      } catch (error) {
-        onError(error);
-        message.error('File upload failed.');
-      }
-    },
-    listType: 'picture',
-    maxCount: 1,
-    showUploadList: {
-      showRemoveIcon: false, // Hide remove icon
-    },
-  };
+  useEffect(() => {
+    // Filter customer based on search value
+    const filterCustomerOptions = customerOptions.filter(option =>
+      option.label.toLowerCase().includes(searchCustomerValue.toLowerCase())
+    );
+    setFilteredCustomerOptions(filterCustomerOptions);
+  }, [searchCustomerValue, customerOptions]);
 
   useEffect(() => {
-    // Filter suppliers based on search value
-    const filterOptions = supplierOptions.filter(option =>
-      option.label.toLowerCase().includes(searchValue.toLowerCase())
+    // Filter goods based on search value
+    const filterGoodsOptions = goodsOptions.filter(option =>
+      option.label.toLowerCase().includes(searchGoodsValue.toLowerCase())
     );
-    setFilteredOptions(filterOptions);
-  }, [searchValue, supplierOptions]);
-
-  useEffect(() => {
-    // Filter suppliers based on search value
-    const filterGoodsCategoryOptions = GoodsCategoryOptions.filter(option =>
-      option.label.toLowerCase().includes(searchGoodsCategoryValue.toLowerCase())
-    );
-    setFilteredGoodsCategoryOptions(filterGoodsCategoryOptions);
-  }, [searchGoodsCategoryValue, GoodsCategoryOptions]);
+    setFilteredGoodsOptions(filterGoodsOptions);
+  }, [searchGoodsValue, goodsOptions]);
   
   const intl = useIntl();
   return (
@@ -200,8 +173,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             id: props.values.id,
             code: props.values.code,
             type: props.values.type,
-            goodsCategoryId: goodsCategoryId,
-            goodsCategoryName: goodsCategoryName,
+            goodsId: goodsId,
+            goodsName: goodsName,
             deliveryNo: props.values.deliveryNo,
             deliveryNoRow: props.values.deliveryNoRow,
           }}
@@ -248,7 +221,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           width="md"
           rules={[
             {
-              required: true,
+              // required: true,
               message: (
                 <FormattedMessage
                   id="pages.searchorders.type"
@@ -259,18 +232,18 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           ]}
         />
         <ProFormSelect
-          name='goodsCategoryId'
-          label={<FormattedMessage id="pages.searchorders.goods" defaultMessage="goodsCategoryId" />}
-          options={GoodsCategoryOptions}
+          name='goodsId'
+          label={<FormattedMessage id="pages.searchorders.goodsId" defaultMessage="goodsId" />}
+          options={goodsOptions}
           fieldProps={{
             showSearch: true,
             filterOption: true, // 禁用默认过滤
-            onSearch: (value) => setSearchGoodsCategoryValue(value), // 更新搜索值
+            onSearch: (value) => setSearchGoodsValue(value), // 更新搜索值
             // dropdownRender: (menu) => (
             //   <div>
             //     <Input.Search
-            //       placeholder="Search goodsCategory"
-            //       onSearch={value => setSearchGoodsCategoryValue(value)}
+            //       placeholder="Search goods"
+            //       onSearch={value => setSearchGoodsValue(value)}
             //       style={{ marginBottom: 8 }}
             //     />
             //     {menu}
@@ -281,7 +254,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             {
               required: true,
               message: (
-                <FormattedMessage id="pages.searchorders.goods" defaultMessage="Please select a goods!" />
+                <FormattedMessage id="pages.searchorders.goodsId" defaultMessage="Please select a goods!" />
               ),
             },
           ]}
@@ -387,7 +360,6 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           width="md"
           rules={[
             {
-              // required: true,
               message: (
                 <FormattedMessage
                   id="pages.searchorders.purchaseMultiple"
@@ -406,7 +378,6 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           width="md"
           rules={[
             {
-              // required: true,
               message: (
                 <FormattedMessage
                   id="pages.searchorders.taxRate"
@@ -425,7 +396,6 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           width="md"
           rules={[
             {
-              // required: true,
               message: (
                 <FormattedMessage
                   id="pages.searchorders.priceWithoutTax"
@@ -468,19 +438,19 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
               return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
             },
           }}
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchorders.price"
-                  defaultMessage="请输入单价！"
-                />
-              ),
-              type: 'number', // Ensure the value is treated as a number
-              transform: value => Number(value),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     // required: true,
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchorders.price"
+          //         defaultMessage="请输入单价！"
+          //       />
+          //     ),
+          //     type: 'number', // Ensure the value is treated as a number
+          //     transform: value => Number(value),
+          //   },
+          // ]}
         />
         <ProFormText
           name="amountBeforeDiscount"
@@ -501,19 +471,19 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
               return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
             },
           }}
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchorders.amountBeforeDiscount"
-                  defaultMessage="请输入折扣前总价！"
-                />
-              ),
-              type: 'number', // Ensure the value is treated as a number
-              transform: value => Number(value),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     // required: true,
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchorders.amountBeforeDiscount"
+          //         defaultMessage="请输入折扣前总价！"
+          //       />
+          //     ),
+          //     type: 'number', // Ensure the value is treated as a number
+          //     transform: value => Number(value),
+          //   },
+          // ]}
         />
         <ProFormText
           name="discount"
@@ -534,19 +504,19 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
               return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
             },
           }}
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchorders.discount"
-                  defaultMessage="请输入优惠金额！"
-                />
-              ),
-              type: 'number', // Ensure the value is treated as a number
-              transform: value => Number(value),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     // required: true,
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchorders.discount"
+          //         defaultMessage="请输入优惠金额！"
+          //       />
+          //     ),
+          //     type: 'number', // Ensure the value is treated as a number
+          //     transform: value => Number(value),
+          //   },
+          // ]}
         />
         <ProFormText
           name="totalAmountWithoutTax"
@@ -567,19 +537,19 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
               return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
             },
           }}
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchorders.totalAmountWithoutTax"
-                  defaultMessage="请输入不含税最终总价！"
-                />
-              ),
-              type: 'number', // Ensure the value is treated as a number
-              transform: value => Number(value),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     // required: true,
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchorders.totalAmountWithoutTax"
+          //         defaultMessage="请输入不含税最终总价！"
+          //       />
+          //     ),
+          //     type: 'number', // Ensure the value is treated as a number
+          //     transform: value => Number(value),
+          //   },
+          // ]}
         />
         <ProFormText
           name="totalAmount"
@@ -600,19 +570,19 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
               return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
             },
           }}
-          rules={[
-            {
-              // required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchorders.totalAmount"
-                  defaultMessage="请输入最终总价！"
-                />
-              ),
-              type: 'number', // Ensure the value is treated as a number
-              transform: value => Number(value),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     // required: true,
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchorders.totalAmount"
+          //         defaultMessage="请输入最终总价！"
+          //       />
+          //     ),
+          //     type: 'number', // Ensure the value is treated as a number
+          //     transform: value => Number(value),
+          //   },
+          // ]}
         />
       </StepsForm.StepForm>
       <StepsForm.StepForm
@@ -727,7 +697,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         initialValues={{
           receiveTime: props.values.receiveTime,
           returnReceiveTime: props.values.returnReceiveTime,
-          customer: props.values.customer,
+          customerId: customerId,
+          customerName: customerName,
           createTime: props.values.createTime,
           takeTime: props.values.takeTime,
         }}
@@ -739,6 +710,10 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       <ProFormDatePicker
         name="receiveTime"
         width="md"
+        fieldProps={{
+            showTime: { format: 'HH:mm:ss' },
+            format: 'YYYY-MM-DDTHH:mm:ss',
+        }}
         label={intl.formatMessage({
           id: 'pages.searchorders.receiveTime',
           defaultMessage: '收货时间',
@@ -757,6 +732,10 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       <ProFormDatePicker
         name="returnReceiveTime"
         width="md"
+        fieldProps={{
+            showTime: { format: 'HH:mm:ss' },
+            format: 'YYYY-MM-DDTHH:mm:ss',
+        }}
         label={intl.formatMessage({
           id: 'pages.searchorders.returnReceiveTime',
           defaultMessage: '退货收货时间',
@@ -772,28 +751,41 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         //   },
         // ]}
       />
-      <ProFormText
-        name="customer"
-        label={intl.formatMessage({
-          id: 'pages.searchorders.customer',
-          defaultMessage: '客户',
-        })}
-        width="md"
-        rules={[
-          {
-            // required: true,
-            message: (
-              <FormattedMessage
-                id="pages.searchorders.customer"
-                defaultMessage="请输入客户！"
-              />
-            ),
-          },
-        ]}
+      <ProFormSelect
+          name='customerId'
+          label={<FormattedMessage id="pages.searchorders.customerId" defaultMessage="customerId" />}
+          options={customerOptions}
+          fieldProps={{
+            showSearch: true,
+            filterOption: true, // 禁用默认过滤
+            onSearch: (value) => setSearchCustomerValue(value), // 更新搜索值
+            // dropdownRender: (menu) => (
+            //   <div>
+            //     <Input.Search
+            //       placeholder="Search Customer"
+            //       onSearch={value => setSearchCustomerValue(value)}
+            //       style={{ marginBottom: 8 }}
+            //     />
+            //     {menu}
+            //   </div>
+            // ),
+          }}
+          // rules={[
+          //   {
+          //     // required: true,
+          //     message: (
+          //       <FormattedMessage id="pages.searchorders.customer" defaultMessage="Please select a customer!" />
+          //     ),
+          //   },
+          // ]}
       />
       <ProFormDatePicker
         name="createTime"
         width="md"
+        fieldProps={{
+            showTime: { format: 'HH:mm:ss' },
+            format: 'YYYY-MM-DDTHH:mm:ss',
+        }}
         label={intl.formatMessage({
           id: 'pages.searchorders.createTime',
           defaultMessage: '订单创建时间',
@@ -812,6 +804,10 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       <ProFormDatePicker
         name="takeTime"
         width="md"
+        fieldProps={{
+            showTime: { format: 'HH:mm:ss' },
+            format: 'YYYY-MM-DDTHH:mm:ss',
+        }}
         label={intl.formatMessage({
           id: 'pages.searchorders.takeTime',
           defaultMessage: '接单时间',
@@ -844,6 +840,10 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       <ProFormDatePicker
         name="deliveryTime"
         width="md"
+        fieldProps={{
+            showTime: { format: 'HH:mm:ss' },
+            format: 'YYYY-MM-DDTHH:mm:ss',
+        }}
         label={intl.formatMessage({
           id: 'pages.searchorders.deliveryTime',
           defaultMessage: '发货时间',
@@ -862,6 +862,10 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       <ProFormDatePicker
         name="signatureTime"
         width="md"
+        fieldProps={{
+            showTime: { format: 'HH:mm:ss' },
+            format: 'YYYY-MM-DDTHH:mm:ss',
+        }}
         label={intl.formatMessage({
           id: 'pages.searchorders.signatureTime',
           defaultMessage: '签收时间',
@@ -884,17 +888,17 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           defaultMessage: '佣金率',
         })}
         width="md"
-        rules={[
-          {
-            // required: true,
-            message: (
-              <FormattedMessage
-                id="pages.searchorders.commissionRate"
-                defaultMessage="请输入佣金率！"
-              />
-            ),
-          },
-        ]}
+        // rules={[
+        //   {
+        //     // required: true,
+        //     message: (
+        //       <FormattedMessage
+        //         id="pages.searchorders.commissionRate"
+        //         defaultMessage="请输入佣金率！"
+        //       />
+        //     ),
+        //   },
+        // ]}
       />
       <ProFormText
         name="commission"
@@ -903,17 +907,17 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           defaultMessage: '佣金',
         })}
         width="md"
-        rules={[
-          {
-            // required: true,
-            message: (
-              <FormattedMessage
-                id="pages.searchorders.commission"
-                defaultMessage="请输入佣金！"
-              />
-            ),
-          },
-        ]}
+        // rules={[
+        //   {
+        //     // required: true,
+        //     message: (
+        //       <FormattedMessage
+        //         id="pages.searchorders.commission"
+        //         defaultMessage="请输入佣金！"
+        //       />
+        //     ),
+        //   },
+        // ]}
       />
       <ProFormText
         name="paymentMethod"
@@ -941,7 +945,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           offlinePaymentBankInfo: props.values.offlinePaymentBankInfo,
           platformPaymentStatus: props.values.platformPaymentStatus,
           vmiPaymentStatus: props.values.vmiPaymentStatus,
-          isGsudaDelivery: props.values.isGsudaDelivery,
+          isGsudaDelivery: isGsudaDeliverys,
         }}
         title={intl.formatMessage({
           id: 'pages.searchorders.updateForm.basicConfig',
@@ -1024,24 +1028,17 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           },
         ]}
       />
-      <ProFormText
-        name="isGsudaDelivery"
-        label={intl.formatMessage({
-          id: 'pages.searchorders.isGsudaDelivery',
-          defaultMessage: 'G速达配送',
-        })}
-        width="md"
-        rules={[
-          {
-            // required: true,
-            message: (
-              <FormattedMessage
-                id="pages.searchorders.isGsudaDelivery"
-                defaultMessage="请输入G速达配送！"
-              />
-            ),
-          },
-        ]}
+      <ProFormSelect
+          name="isGsudaDelivery"
+          label={intl.formatMessage({
+            id: 'pages.searchorders.isGsudaDelivery',
+            defaultMessage: 'G速达配送',
+          })}
+          width="md"
+          valueEnum={{
+            true: '是',
+            false: '否',
+          }}
       />
       </StepsForm.StepForm>
       <StepsForm.StepForm
@@ -1101,17 +1098,17 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           defaultMessage: '服务项单价调整',
         })}
         width="md"
-        rules={[
-          {
-            // required: true,
-            message: (
-              <FormattedMessage
-                id="pages.searchorders.servicePriceAdjust"
-                defaultMessage="请输入服务项单价调整！"
-              />
-            ),
-          },
-        ]}
+        // rules={[
+        //   {
+        //     // required: true,
+        //     message: (
+        //       <FormattedMessage
+        //         id="pages.searchorders.servicePriceAdjust"
+        //         defaultMessage="请输入服务项单价调整！"
+        //       />
+        //     ),
+        //   },
+        // ]}
       />
       <ProFormTextArea
         name="remark"
