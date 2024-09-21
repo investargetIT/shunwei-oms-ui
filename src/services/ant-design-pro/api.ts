@@ -6,7 +6,7 @@ import { request } from '@umijs/max';
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
     data: API.CurrentUser;
-  }>(process.env.USER_AUTH_BASE_URL + '/user/user-check', {
+  }>(process.env.USER_AUTH_BASE_URL + '/user/profile', {
     method: 'GET',
     ...(options || {}),
   });
@@ -22,7 +22,7 @@ export async function outLogin(options?: { [key: string]: any }) {
 
 /** 登录接口 POST /api/login/account */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>(process.env.USER_AUTH_BASE_URL + '/user/login/password', {
+  return request<API.LoginResult>(process.env.USER_AUTH_BASE_URL + '/auth/login', {
     method: 'POST',
     data: `username=${body.username}&password=${body.password}`,
     ...(options || {}),
