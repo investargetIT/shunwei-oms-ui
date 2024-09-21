@@ -118,8 +118,8 @@ const Login: React.FC = () => {
     try {
       // 登录
       const res = await login({ ...values, type });
-      if (res.msg === 'success') {
-        localStorage.setItem('token', res.data);
+      if (res.status === 'success') {
+        localStorage.setItem('token', res.data.content);
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
