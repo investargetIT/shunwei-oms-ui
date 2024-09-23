@@ -29,6 +29,16 @@ export async function login(body: API.LoginParams, options?: { [key: string]: an
   });
 }
 
+/** 更新用户密码 PUT /orders */
+export async function updatePassword(body: API.PasswordParams, options?: { [key: string]: any }) {
+  return request<{
+  }>(process.env.USER_AUTH_BASE_URL + '/user/change-password', {
+    method: 'POST',
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /api/notices */
 export async function getNotices(options?: { [key: string]: any }) {
   return request<API.NoticeIconList>('http://localhost:8000/api/notices', {

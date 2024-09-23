@@ -68,6 +68,11 @@ declare namespace API {
     type?: string;
   };
 
+  type PasswordParams = {
+    old_password?: string;
+    new_password?: string;
+  };
+
   type ErrorResponse = {
     /** 业务约定的错误码 */
     errorCode: string;
