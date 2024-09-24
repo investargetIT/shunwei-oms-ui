@@ -166,7 +166,7 @@ const Login: React.FC = () => {
         <div
           style={{
             flex: '1',
-            padding: '32px 0',
+            // padding: '32px 0',
           }}
         >
           <LoginFormPage
@@ -374,7 +374,11 @@ const Login: React.FC = () => {
           </div> */}
           </LoginFormPage>
         </div>
-        <Footer />
+        <Footer 
+        style={{
+          marginBottom: 24,
+        }}
+        />
       </div>
     </ConfigProvider>
   );
