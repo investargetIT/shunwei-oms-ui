@@ -166,6 +166,7 @@ const Login: React.FC = () => {
         <div
           style={{
             flex: '1',
+            zIndex: 1,
             // padding: '32px 0',
           }}
         >
