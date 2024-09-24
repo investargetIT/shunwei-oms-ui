@@ -152,7 +152,7 @@ const Login: React.FC = () => {
         },
       }}
     >
-      <div className={styles.container}>
+      <div className={`${styles.container} page-login`}>
         <Helmet>
           <title>
             {intl.formatMessage({
@@ -374,11 +374,9 @@ const Login: React.FC = () => {
           </div> */}
           </LoginFormPage>
         </div>
-        <Footer 
-        style={{
-          marginBottom: 24,
-        }}
-        />
+        <div style={{ position: 'fixed', left: 0, bottom: 0, width: '100%', zIndex: 1, color: 'white' }}>
+          <Footer />
+        </div>
       </div>
     </ConfigProvider>
   );
