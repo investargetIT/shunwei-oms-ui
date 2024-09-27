@@ -330,7 +330,7 @@ export async function removeGoods(ids: any) {
   }
 }
 
-/** 获取商品品类 GET /goods/categories */
+/** 获取商品品类所有数据 GET /goods/categories */
 export async function goodsCategory(params: API.PageParams) {
   const { current, pageSize, ...restParams } = params;
   try {
@@ -378,6 +378,27 @@ export async function fetchGoodsCategory(params: API.PageParams) {
     return {
       data: formattedData,
       total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error fetching goodsCategories:', error);
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
+/** 获取商品大类、中类、小类、名称 GET /goods/categories/all */
+export async function fetchGoodsCategoryAll(params: API.PageParams) {
+  try {
+    const response = await request('/goods/categories/all', {
+      method: 'GET',
+    });
+    const formattedData = response.data;
+    return {
+      data: formattedData,
       success: true,
     };
   } catch (error) {
