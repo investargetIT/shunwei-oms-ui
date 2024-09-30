@@ -234,19 +234,11 @@ const Login: React.FC = () => {
                     size: 'large',
                     prefix: <UserOutlined />,
                   }}
-                  placeholder={intl.formatMessage({
-                    id: 'pages.login.username.placeholder',
-                    defaultMessage: '用户名/手机号',
-                  })}
+                  placeholder="手机号"
                   rules={[
                     {
                       required: true,
-                      message: (
-                        <FormattedMessage
-                          id="pages.login.username.required"
-                          defaultMessage="请输入用户名/手机号!"
-                        />
-                      ),
+                      message: '手机号是必填项',
                     },
                   ]}
                 />
