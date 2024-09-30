@@ -54,4 +54,6 @@ export default {
   'menu.goods': '商品管理',
   'menu.customer': '客户管理',
   'menu.orders': '订单管理',
+  'menu.orders.hotel': '酒店订单',
+  'menu.orders.mro': 'MRO订单',
 };

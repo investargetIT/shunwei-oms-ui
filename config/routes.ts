@@ -80,6 +80,18 @@ export default [
     icon: 'table',
     path: '/orders',
     component: './Orders',
+    routes: [
+      {
+        name: 'hotel',
+        path: 'hotel',
+        component: './Orders',
+      },
+      {
+        name: 'mro',
+        path: 'mro',
+        component: './Mro',
+      },
+    ],
   },
   {
     path: '/',
