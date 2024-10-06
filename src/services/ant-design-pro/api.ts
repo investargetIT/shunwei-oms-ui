@@ -562,7 +562,7 @@ export async function removeCustomer(ids: any) {
   }
 }
 
-/** 获取订单信息 GET /orders/search */
+/** 获取酒店订单信息 GET /orders/search */
 export async function order(params: API.PageParams) {
   const { current, pageSize, ...restParams } = params;
   try {
@@ -588,7 +588,7 @@ export async function order(params: API.PageParams) {
   }
 }
 
-/** 更新订单信息 PUT /orders */
+/** 更新酒店订单信息 PUT /orders */
 export async function updateOrder(id: string, data: any) {
   try {
     const response = await request<API.OrdersListItem>(`/orders/${id}`, {
@@ -607,7 +607,7 @@ export async function updateOrder(id: string, data: any) {
 }
 
 
-/** 新建订单信息 POST /orders */
+/** 新建酒店订单信息 POST /orders */
 export async function addOrder(options?: { [key: string]: any }) {
   return request<API.OrdersListItem>('/orders', {
     method: 'POST',
@@ -617,7 +617,7 @@ export async function addOrder(options?: { [key: string]: any }) {
   });
 }
 
-/** 删除订单信息 DELETE /orders/batch */
+/** 删除酒店订单信息 DELETE /orders/batch */
 export async function removeOrder(ids: any) {
   try {
     const response = await request<API.OrdersListItem>(`/orders/batch`, {
@@ -631,6 +631,79 @@ export async function removeOrder(ids: any) {
     return response;
   } catch (error) {
     console.error('Failed to delete orders:', error);
+    throw error;
+  }
+}
+
+/** 获取MRO订单信息 GET /mro/search */
+export async function mro(params: API.PageParams) {
+  const { current, pageSize, ...restParams } = params;
+  try {
+    const response = await request('/mro/search', {
+      method: 'GET',
+      params: {
+        ...restParams,
+        page: current - 1,   // Map to 'page'
+        size: pageSize,  // Map to 'size'
+      },
+    });
+    return {
+      data: response.data.content,
+      total: response.data.totalElements,
+      success: true,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      total: 0,
+      success: false,
+    };
+  }
+}
+
+/** 更新MRO订单信息 PUT /orders */
+export async function updateMro(id: string, data: any) {
+  try {
+    const response = await request<API.MroListItem>(`/mro/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+      data,
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to update mro:', error);
+    throw error;
+  }
+}
+
+
+/** 新建MRO订单信息 POST /mro */
+export async function addMro(options?: { [key: string]: any }) {
+  return request<API.MroListItem>('/mro', {
+    method: 'POST',
+    data:{
+      ...(options || {}),
+    }
+  });
+}
+
+/** 删除MRO订单信息 DELETE /Mro/batch */
+export async function removeMro(ids: any) {
+  try {
+    const response = await request<API.MroListItem>(`/mro/batch`, {
+      method: 'DELETE',
+      data: {ids},
+      headers: {
+        'Content-Type': 'application/json',
+        // 如果需要认证 token，请在 headers 中添加
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Failed to delete mro:', error);
     throw error;
   }
 }

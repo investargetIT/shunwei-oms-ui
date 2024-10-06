@@ -1,5 +1,5 @@
-import { addOrder, removeOrder, order, updateOrder, fetchCustomer, fetchGoods } from '@/services/ant-design-pro/api';
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { addMro, removeMro, mro, updateMro } from '@/services/ant-design-pro/api';
+import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
   FooterToolbar,
@@ -21,62 +21,7 @@ import type { FormValueType } from './components/UpdateForm.tsx';
 import UpdateForm from './components/UpdateForm.tsx';
 
 const Mro: React.FC = () => {
-  const [customerOptions, setCustomerOptions] = useState([]);
-  const [filteredOptions, setFilteredOptions] = useState([]);
-  const [initialValues, setInitialValues] = useState({});
-  const [searchValue, setSearchValue] = useState('');
-  const [goodsOptions, setGoodsOptions] = useState([]);
-  const [filteredGoodsOptions, setFilteredGoodsOptions] = useState([]);
-  const [searchGoodsValue, setSearchGoodsValue] = useState('');
 
-  useEffect(() => {
-    // Fetch Customer initially
-    const loadCustomer = async () => {
-      const { data, success } = await fetchCustomer({ current: 1, pageSize: 10000 }); // Fetch enough data
-      if (success) {
-        const options = data.map(customer => ({
-          label: customer.name,
-          value: customer.id,
-        }));
-        setCustomerOptions(options);
-        setFilteredOptions(options); // Initialize filtered options
-      }
-    };
-    loadCustomer();
-  }, []);
-
-  useEffect(() => {
-    // Fetch Goods initially
-    const loadGoods = async () => {
-      const { data, success } = await fetchGoods({ current: 1, pageSize: 10000 }); // Fetch enough data
-      if (success) {
-        const options = data.map(goods => ({
-          label: goods.name,
-        //   label: goods.goodsCategoryName? `${goods.name}/${goods.goodsCategoryName}`: goods.name,
-          value: goods.id,
-        }));
-        setGoodsOptions(options);
-        setFilteredGoodsOptions(options); // Initialize filtered options
-      }
-    };
-    loadGoods();
-  }, []);
-
-  useEffect(() => {
-    // Filter customer based on search value
-    const filterOptions = customerOptions.filter(option =>
-      option.label.toLowerCase().includes(searchValue.toLowerCase())
-    );
-    setFilteredOptions(filterOptions);
-  }, [searchValue, customerOptions]);
-
-  useEffect(() => {
-    // Filter goods based on search value
-    const filterGoodsOptions = goodsOptions.filter(option =>
-      option.label.toLowerCase().includes(searchGoodsValue.toLowerCase())
-    );
-    setFilteredGoodsOptions(filterGoodsOptions);
-  }, [searchGoodsValue, goodsOptions]);
 
   /**
    * @en-US Pop-up window of new window
@@ -92,8 +37,8 @@ const Mro: React.FC = () => {
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.OrdersListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.OrdersListItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.MroListItem>();
+  const [selectedRowsState, setSelectedRows] = useState<API.MroListItem[]>([]);
 
   /**
    * @en-US International configuration
@@ -101,242 +46,299 @@ const Mro: React.FC = () => {
    * */
   const intl = useIntl();
 
-  const columns: ProColumns<API.OrdersListItem>[] = [
+  const columns: ProColumns<API.MroListItem>[] = [
     {
-      title: <FormattedMessage id="pages.searchorders.code" defaultMessage="Description" />,
-      dataIndex: 'code',
-      valueType: 'textarea',
-    },
-    {
-      title: <FormattedMessage id="pages.searchorders.type" defaultMessage="Description" />,
-      dataIndex: 'type',
-      valueType: 'textarea',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.goodsId" defaultMessage="Description" />,
-        dataIndex:  ['goods', 'name'],
+        title: <FormattedMessage id="pages.searchmro.projectCode" defaultMessage="项目编号" />,
+        dataIndex: 'projectCode',
         valueType: 'textarea',
     },
     {
-      title: '大类',
-      dataIndex: ['goods','goodsCategory', 'parentCategory'],
-    },
-    {
-      title: '中类',
-      dataIndex: ['goods','goodsCategory', 'category'],
-    },
-    {
-      title: '小类',
-      dataIndex: ['goods','goodsCategory', 'subCategory'],
-    },
-    {
-      title: '品类',
-      dataIndex: ['goods','goodsCategory', 'name'],
-    },
-    {
-      title: '供应商',
-      dataIndex: ['goods','supplier', 'name'],
-    },
-    {
-      title: <FormattedMessage id="pages.searchorders.deliveryNo" defaultMessage="Description" />,
-      dataIndex: 'deliveryNo',
-      valueType: 'textarea',
-    },
-    {
-      title: <FormattedMessage id="pages.searchorders.deliveryNoRow" defaultMessage="Description" />,
-      dataIndex: 'deliveryNoRow',
-      valueType: 'textarea',
-    },
-    {
-      title: <FormattedMessage id="pages.searchorders.invoiceName" defaultMessage="Description" />,
-      dataIndex: 'invoiceName',
-      valueType: 'textarea',
-    },
-    {
-      title: <FormattedMessage id="pages.searchorders.num" defaultMessage="Description" />,
-      dataIndex: 'num',
-      valueType: 'textarea',
-    },
-    {
-      title: <FormattedMessage id="pages.searchorders.purchaseMultiple" defaultMessage="Description" />,
-      dataIndex: 'purchaseMultiple',
-      valueType: 'textarea',
-    },
-    {
-      title: <FormattedMessage id="pages.searchorders.taxRate" defaultMessage="Description" />,
-      dataIndex: 'taxRate',
-      valueType: 'textarea',
-    },
-    {
-      title: <FormattedMessage id="pages.searchorders.priceWithoutTax" defaultMessage="Description" />,
-      dataIndex: 'priceWithoutTax',
-      valueType: 'textarea',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.price" defaultMessage="Description" />,
-        dataIndex: 'price',
+        title: <FormattedMessage id="pages.searchmro.salesRep" defaultMessage="销售员" />,
+        dataIndex: 'salesRep',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.amountBeforeDiscount" defaultMessage="Description" />,
-        dataIndex: 'amountBeforeDiscount',
+        title: <FormattedMessage id="pages.searchmro.clientName" defaultMessage="终端单位名称" />,
+        dataIndex: 'clientName',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.discount" defaultMessage="Description" />,
-        dataIndex: 'discount',
+        title: <FormattedMessage id="pages.searchmro.orderChannel" defaultMessage="平台/线下" />,
+        dataIndex: 'orderChannel',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.totalAmountWithoutTax" defaultMessage="Description" />,
-        dataIndex: 'totalAmountWithoutTax',
+        title: <FormattedMessage id="pages.searchmro.channelCoefficient" defaultMessage="平台系数" />,
+        dataIndex: 'channelCoefficient',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.totalAmount" defaultMessage="Description" />,
-        dataIndex: 'totalAmount',
+        title: <FormattedMessage id="pages.searchmro.orderSummary" defaultMessage="下单概况" />,
+        dataIndex: 'orderSummary',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.discountName" defaultMessage="Description" />,
-        dataIndex: 'discountName',
+        title: <FormattedMessage id="pages.searchmro.orderDate" defaultMessage="下单日期" />,
+        dataIndex: 'orderDate',
+        valueType: 'date',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.productInquiryDescription" defaultMessage="客户询价商品描述" />,
+        dataIndex: 'productInquiryDescription',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.discountType" defaultMessage="Description" />,
-        dataIndex: 'discountType',
-        valueType: 'textarea',
-    },
-    // {
-    //     title: <FormattedMessage id="pages.searchorders.supplierId" defaultMessage="Description" />,
-    //     dataIndex: 'supplier',
-    //     render: (supplier) => supplier?.name || 'No name',
-    // },
-    {
-        title: <FormattedMessage id="pages.searchorders.status" defaultMessage="Description" />,
-        dataIndex: 'status',
-        // sorter: true,
+        title: <FormattedMessage id="pages.searchmro.quantity" defaultMessage="数量" />,
+        dataIndex: 'quantity',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.reviewTime" defaultMessage="Description" />,
-        dataIndex: 'reviewTime',
-        sorter: true,
-        valueType: 'dateTime',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.reviewStatus" defaultMessage="Description" />,
-        dataIndex: 'reviewStatus',
+        title: <FormattedMessage id="pages.searchmro.unit" defaultMessage="单位" />,
+        dataIndex: 'unit',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.receiveTime" defaultMessage="Description" />,
-        dataIndex: 'receiveTime',
-        sorter: true,
-        valueType: 'dateTime',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.returnReceiveTime" defaultMessage="Description" />,
-        dataIndex: 'returnReceiveTime',
-        sorter: true,
-        valueType: 'dateTime',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.customerId" defaultMessage="Description" />,
-        dataIndex:  ['customer', 'name'],
+        title: <FormattedMessage id="pages.searchmro.salesPricePerUnit" defaultMessage="销售含税单价" />,
+        dataIndex: 'salesPricePerUnit',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.createTime" defaultMessage="Description" />,
-        dataIndex: 'createTime',
-        sorter: true,
-        valueType: 'dateTime',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.takeTime" defaultMessage="Description" />,
-        dataIndex: 'takeTime',
-        sorter: true,
-        valueType: 'dateTime',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.deliveryTime" defaultMessage="Description" />,
-        dataIndex: 'deliveryTime',
-        sorter: true,
-        valueType: 'dateTime',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.signatureTime" defaultMessage="Description" />,
-        dataIndex: 'signatureTime',
-        sorter: true,
-        valueType: 'dateTime',
-    },
-    {
-        title: <FormattedMessage id="pages.searchorders.commissionRate" defaultMessage="Description" />,
-        dataIndex: 'commissionRate',
+        title: <FormattedMessage id="pages.searchmro.salesTotalPrice" defaultMessage="销售含税总价" />,
+        dataIndex: 'salesTotalPrice',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.commission" defaultMessage="Description" />,
-        dataIndex: 'commission',
+        title: <FormattedMessage id="pages.searchmro.settlementPricePerUnit" defaultMessage="结算含税单价" />,
+        dataIndex: 'settlementPricePerUnit',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.paymentMethod" defaultMessage="Description" />,
-        dataIndex: 'paymentMethod',
+        title: <FormattedMessage id="pages.searchmro.settlementTotalPrice" defaultMessage="结算含税总价" />,
+        dataIndex: 'settlementTotalPrice',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.onlinePaymentTransactionNo" defaultMessage="Description" />,
-        dataIndex: 'onlinePaymentTransactionNo',
+        title: <FormattedMessage id="pages.searchmro.recipientName" defaultMessage="收货人名称" />,
+        dataIndex: 'recipientName',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.offlinePaymentBankInfo" defaultMessage="Description" />,
-        dataIndex: 'offlinePaymentBankInfo',
+        title: <FormattedMessage id="pages.searchmro.recipientPhone" defaultMessage="收货人电话" />,
+        dataIndex: 'recipientPhone',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.platformPaymentStatus" defaultMessage="Description" />,
-        dataIndex: 'platformPaymentStatus',
+        title: <FormattedMessage id="pages.searchmro.deliveryAddress" defaultMessage="客户收货地址" />,
+        dataIndex: 'deliveryAddress',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.vmiPaymentStatus" defaultMessage="Description" />,
-        dataIndex: 'vmiPaymentStatus',
+        title: <FormattedMessage id="pages.searchmro.requestedDeliveryDate" defaultMessage="客户要求交货日期" />,
+        dataIndex: 'requestedDeliveryDate',
+        valueType: 'date',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.procurementCode" defaultMessage="采购编码" />,
+        dataIndex: 'procurementCode',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.isGsudaDelivery" defaultMessage="Description" />,
-        dataIndex: 'isGsudaDelivery',
+        title: <FormattedMessage id="pages.searchmro.platformAmount" defaultMessage="平台金额" />,
+        dataIndex: 'platformAmount',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.supplierName" defaultMessage="供应商名称" />,
+        dataIndex: 'supplierName',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.materialCode" defaultMessage="物料编码" />,
+        dataIndex: 'materialCode',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.brand" defaultMessage="品牌" />,
+        dataIndex: 'brand',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.productName" defaultMessage="产品名称" />,
+        dataIndex: 'productName',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.productModel" defaultMessage="产品型号" />,
+        dataIndex: 'productModel',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.supplierDeliveryTime" defaultMessage="供货商交货货期" />,
+        dataIndex: 'supplierDeliveryTime',
+        valueType: 'date',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.purchasePrice" defaultMessage="采购单价" />,
+        dataIndex: 'purchasePrice',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.purchaseTotalPrice" defaultMessage="采购总价" />,
+        dataIndex: 'purchaseTotalPrice',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.isTaxShippingInclusive" defaultMessage="是否含税含运" />,
+        dataIndex: 'isTaxShippingInclusive',
         valueType: 'select',
         render: (text) => text ? '是' : '否',
         valueEnum: {
             true: '是',
             false: '否',
-          },
+        },
     },
     {
-        title: <FormattedMessage id="pages.searchorders.shippingWarehouseType" defaultMessage="Description" />,
-        dataIndex: 'shippingWarehouseType',
+        title: <FormattedMessage id="pages.searchmro.grossProfit" defaultMessage="毛利额" />,
+        dataIndex: 'grossProfit',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.services" defaultMessage="Description" />,
-        dataIndex: 'services',
+        title: <FormattedMessage id="pages.searchmro.grossMargin" defaultMessage="毛利率" />,
+        dataIndex: 'grossMargin',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.servicePriceAdjust" defaultMessage="Description" />,
-        dataIndex: 'servicePriceAdjust',
+        title: <FormattedMessage id="pages.searchmro.paymentMethod" defaultMessage="付款方式" />,
+        dataIndex: 'paymentMethod',
         valueType: 'textarea',
     },
     {
-        title: <FormattedMessage id="pages.searchorders.remark" defaultMessage="Description" />,
-        dataIndex: 'remark',
+        title: <FormattedMessage id="pages.searchmro.platformSku" defaultMessage="平台SKU编码" />,
+        dataIndex: 'platformSku',
         valueType: 'textarea',
     },
     {
-      title: <FormattedMessage id="pages.searchorders.operation" defaultMessage="Operating" />,
+        title: <FormattedMessage id="pages.searchmro.isOrderedOnPlatform" defaultMessage="平台是否下单" />,
+        dataIndex: 'isOrderedOnPlatform',
+        valueType: 'select',
+        render: (text) => text ? '是' : '否',
+        valueEnum: {
+            true: '是',
+            false: '否',
+        },
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.platformOrderNumber" defaultMessage="平台订单号" />,
+        dataIndex: 'platformOrderNumber',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.supplierPaymentDate" defaultMessage="供应商付款时间" />,
+        dataIndex: 'supplierPaymentDate',
+        valueType: 'date',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.purchasePaymentAmount" defaultMessage="采购付款金额" />,
+        dataIndex: 'purchasePaymentAmount',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.logisticsCompany" defaultMessage="物流公司" />,
+        dataIndex: 'logisticsCompany',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.trackingNumber" defaultMessage="发货物流单号" />,
+        dataIndex: 'trackingNumber',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.deliveryStatus" defaultMessage="到货情况" />,
+        dataIndex: 'deliveryStatus',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.arrivalDate" defaultMessage="到货日期" />,
+        dataIndex: 'arrivalDate',
+        valueType: 'date',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.isInvoiceReceived" defaultMessage="是否回票" />,
+        dataIndex: 'isInvoiceReceived',
+        valueType: 'select',
+        render: (text) => text ? '是' : '否',
+        valueEnum: {
+            true: '是',
+            false: '否',
+        },
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.procurementInvoiceNumber" defaultMessage="采购发票号" />,
+        dataIndex: 'procurementInvoiceNumber',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.procurementInvoiceAmount" defaultMessage="采购发票金额" />,
+        dataIndex: 'procurementInvoiceAmount',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.procurementInvoiceDate" defaultMessage="采购发票日期" />,
+        dataIndex: 'procurementInvoiceDate',
+        valueType: 'date',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.purchaseNote" defaultMessage="采购备注" />,
+        dataIndex: 'purchaseNote',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.billingDate" defaultMessage="开票日期" />,
+        dataIndex: 'billingDate',
+        valueType: 'date',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.salesInvoiceNumber" defaultMessage="销售发票号" />,
+        dataIndex: 'salesInvoiceNumber',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.invoiceAmount" defaultMessage="发票金额" />,
+        dataIndex: 'invoiceAmount',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.receivablesDate" defaultMessage="应收日期" />,
+        dataIndex: 'receivablesDate',
+        valueType: 'date',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.isPaymentReceived" defaultMessage="是否收款" />,
+        dataIndex: 'isPaymentReceived',
+        valueType: 'select',
+        render: (text) => text ? '是' : '否',
+        valueEnum: {
+            true: '是',
+            false: '否',
+        },
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.paymentReceivedAmount" defaultMessage="已收款金额" />,
+        dataIndex: 'paymentReceivedAmount',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.adjustmentNote" defaultMessage="调整说明" />,
+        dataIndex: 'adjustmentNote',
+        valueType: 'textarea',
+    },
+    {
+        title: <FormattedMessage id="pages.searchmro.saleNote" defaultMessage="销售备注" />,
+        dataIndex: 'saleNote',
+        valueType: 'textarea',
+    },
+    {
+      title: <FormattedMessage id="pages.searchmro.operation" defaultMessage="Operating" />,
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
@@ -348,7 +350,7 @@ const Mro: React.FC = () => {
             setCurrentRow(record);
           }}
         >
-          <FormattedMessage id="pages.searchorders.operation.edit" defaultMessage="edit" />
+          <FormattedMessage id="pages.searchmro.operation.edit" defaultMessage="edit" />
         </a>,
         !showDetail && ( // Check if detail view is not open
             <a
@@ -359,23 +361,24 @@ const Mro: React.FC = () => {
                 setShowDetail(true);     // Displays the details view
               }}
             >
-              <FormattedMessage id="pages.searchorders.operation.details" defaultMessage="details" />
+              <FormattedMessage id="pages.searchmro.operation.details" defaultMessage="details" />
             </a>
           )
       ],
     },
-  ];
+];
+
 
   /**
  * @en-US Add node
  * @zh-CN 添加节点
  * @param fields
  */
-  const handleAdd = async (fields: API.OrdersListItem) => {
+  const handleAdd = async (fields: API.MroListItem) => {
     const hide = message.loading('正在添加');
     console.log(fields)
     try {
-      await addOrder({ ...fields });
+      await addMro({ ...fields });
       hide();
       message.success('Added successfully');
       return true;
@@ -397,48 +400,63 @@ const Mro: React.FC = () => {
     const id = fields.id;
     const values = {
       id: fields.id,
-      code: fields.code,
-      type: fields.type,
-      goodsId: fields.goodsId,
-      deliveryNo: fields.deliveryNo,
-      deliveryNoRow: fields.deliveryNoRow,
-      invoiceName: fields.invoiceName,
-      num: fields.num,
-      purchaseMultiple: fields.purchaseMultiple,
-      taxRate: fields.taxRate,
-      priceWithoutTax: fields.priceWithoutTax,
-      price: fields.price,
-      amountBeforeDiscount: fields.amountBeforeDiscount,
-      discount: fields.discount,
-      totalAmountWithoutTax: fields.totalAmountWithoutTax,
-      totalAmount: fields.totalAmount,
-      discountName: fields.discountName,
-      discountType: fields.discountType,
-      status: fields.status,
-      receiveTime: fields.receiveTime,
-      reviewStatus: fields.reviewStatus,
-      reviewTime: fields.reviewTime,
-      returnReceiveTime: fields.returnReceiveTime,
-      customerId: fields.customerId,
-      createTime: fields.createTime,
-      takeTime: fields.takeTime,
-      deliveryTime: fields.deliveryTime,
-      signatureTime: fields.signatureTime,
-      commissionRate: fields.commissionRate,
-      commission: fields.commission,
+      projectCode: fields.projectCode,
+      salesRep: fields.salesRep,
+      clientName: fields.clientName,
+      orderChannel: fields.orderChannel,
+      channelCoefficient: fields.channelCoefficient,
+      orderSummary: fields.orderSummary,
+      orderDate: fields.orderDate,
+      productInquiryDescription: fields.productInquiryDescription,
+      quantity: fields.quantity,
+      unit: fields.unit,
+      salesPricePerUnit: fields.salesPricePerUnit,
+      salesTotalPrice: fields.salesTotalPrice,
+      settlementPricePerUnit: fields.settlementPricePerUnit,
+      settlementTotalPrice: fields.settlementTotalPrice,
+      recipientName: fields.recipientName,
+      recipientPhone: fields.recipientPhone,
+      deliveryAddress: fields.deliveryAddress,
+      requestedDeliveryDate: fields.requestedDeliveryDate,
+      procurementCode: fields.procurementCode,
+      platformAmount: fields.platformAmount,
+      supplierName: fields.supplierName,
+      materialCode: fields.materialCode,
+      brand: fields.brand,
+      productName: fields.productName,
+      productModel: fields.productModel,
+      supplierDeliveryTime: fields.supplierDeliveryTime,
+      purchasePrice: fields.purchasePrice,
+      purchaseTotalPrice: fields.purchaseTotalPrice,
+      isTaxShippingInclusive: fields.isTaxShippingInclusive,
+      grossProfit: fields.grossProfit,
+      grossMargin: fields.grossMargin,
       paymentMethod: fields.paymentMethod,
-      onlinePaymentTransactionNo: fields.onlinePaymentTransactionNo,
-      offlinePaymentBankInfo: fields.offlinePaymentBankInfo,
-      platformPaymentStatus: fields.platformPaymentStatus,
-      vmiPaymentStatus: fields.vmiPaymentStatus,
-      isGsudaDelivery: fields.isGsudaDelivery,
-      shippingWarehouseType: fields.shippingWarehouseType,
-      services: fields.services,
-      servicePriceAdjust: fields.servicePriceAdjust,
-      remark: fields.remark,
+      platformSku: fields.platformSku,
+      isOrderedOnPlatform: fields.isOrderedOnPlatform,
+      platformOrderNumber: fields.platformOrderNumber,
+      supplierPaymentDate: fields.supplierPaymentDate,
+      purchasePaymentAmount: fields.purchasePaymentAmount,
+      logisticsCompany: fields.logisticsCompany,
+      trackingNumber: fields.trackingNumber,
+      deliveryStatus: fields.deliveryStatus,
+      arrivalDate: fields.arrivalDate,
+      isInvoiceReceived: fields.isInvoiceReceived,
+      procurementInvoiceNumber: fields.procurementInvoiceNumber,
+      procurementInvoiceAmount: fields.procurementInvoiceAmount,
+      procurementInvoiceDate: fields.procurementInvoiceDate,
+      purchaseNote: fields.purchaseNote,
+      billingDate: fields.billingDate,
+      salesInvoiceNumber: fields.salesInvoiceNumber,
+      invoiceAmount: fields.invoiceAmount,
+      receivablesDate: fields.receivablesDate,
+      isPaymentReceived: fields.isPaymentReceived,
+      paymentReceivedAmount: fields.paymentReceivedAmount,
+      adjustmentNote: fields.adjustmentNote,
+      saleNote: fields.saleNote,      
     }
     try {
-      await updateOrder(id, values);
+      await updateMro(id, values);
       hide();
       message.success('Configuration is successful');
       return true;
@@ -455,7 +473,7 @@ const Mro: React.FC = () => {
   *
   * @param selectedRows
   */
-  const handleRemove = async (selectedRows: API.OrdersListItem[]) => {
+  const handleRemove = async (selectedRows: API.MroListItem[]) => {
     Modal.confirm({
       title: <FormattedMessage id="pages.searchorders.deleteConfirmTitle" defaultMessage="确认删除" />,
       content: <FormattedMessage id="pages.searchorders.deleteConfirmContent" defaultMessage="确定要删除吗？" />,
@@ -466,7 +484,7 @@ const Mro: React.FC = () => {
         if (!selectedRows) return true;
         const ids = selectedRows.map((row) => row.id);
         try {
-          await removeOrder(ids);
+          await removeMro(ids);
           hide();
           message.success('删除成功');
           setSelectedRows([]);
@@ -483,9 +501,9 @@ const Mro: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.OrdersListItem, API.PageParams>
+      <ProTable<API.MroListItem, API.PageParams>
         headerTitle={intl.formatMessage({
-          id: 'pages.searchorders.title',
+          id: 'pages.searchmro.title',
           defaultMessage: 'Enquiry form',
         })}
         actionRef={actionRef}
@@ -502,10 +520,10 @@ const Mro: React.FC = () => {
               handleModalOpen(true);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchorders.new" defaultMessage="New" />
+            <PlusOutlined /> <FormattedMessage id="pages.searchmro.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={order}
+        request={mro}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -518,24 +536,15 @@ const Mro: React.FC = () => {
         <FooterToolbar
           extra={
             <div>
-              <FormattedMessage id="pages.searchorders.chosen" defaultMessage="Chosen" />{' '}
+              <FormattedMessage id="pages.searchmro.chosen" defaultMessage="Chosen" />{' '}
               <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchorders.item" defaultMessage="项" />
-              {/* &nbsp;&nbsp;
-              <span>
-                <FormattedMessage
-                  id="pages.searchTable.totalServiceCalls"
-                  defaultMessage="Total number of service calls"
-                />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)}{' '}
-                <FormattedMessage id="pages.searchorders.tenThousand" defaultMessage="万" />
-              </span> */}
+              <FormattedMessage id="pages.searchmro.item" defaultMessage="项" />
             </div>
           }
         >
           <Button onClick={() => handleRemove(selectedRowsState)}>
             <FormattedMessage
-              id="pages.searchorders.batchDeletion"
+              id="pages.searchmro.batchDeletion"
               defaultMessage="Batch deletion"
             />
           </Button>
@@ -547,761 +556,479 @@ const Mro: React.FC = () => {
           </Button> */}
         </FooterToolbar>
       )}
-        {createModalOpen &&( <ModalForm
-            title={intl.formatMessage({
-            id: 'pages.searchorders.createForm.newInfo',
-            defaultMessage: '新建信息',
-            })}
-            width="400px"
-            open={createModalOpen}
-            onOpenChange={handleModalOpen}
-            onFinish={async (value) => {
-            const success = await handleAdd(value as API.OrdersListItem);
-            if (success) {
-                handleModalOpen(false);
-                if (actionRef.current) {
-                actionRef.current.reload();
-                }
-            }
-            }}
-        >
-            <ProFormText
-            name="code"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.code',
-                defaultMessage: '订单编号',
-            })}
-            width="md"
-            rules={[
-                {
-                required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.code"
-                    defaultMessage="请输入订单编号！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="type"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.type',
-                defaultMessage: '订单类型',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.type"
-                    defaultMessage="请输入订单类型！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormSelect
-              name="goodsId"
-              label={<FormattedMessage id="pages.searchorders.goodsId" defaultMessage="goodsId" />}
+        {createModalOpen &&( 
+          <ModalForm
+          title={intl.formatMessage({
+              id: 'pages.searchmro.createForm.newInfo',
+              defaultMessage: '新建信息',
+          })}
+          width="400px"
+          open={createModalOpen}
+          onOpenChange={handleModalOpen}
+          onFinish={async (value) => {
+              const success = await handleAdd(value as API.MroListItem);
+              if (success) {
+                  handleModalOpen(false);
+                  if (actionRef.current) {
+                      actionRef.current.reload();
+                  }
+              }
+          }}
+      >
+
+          <ProFormText
+              name="projectCode"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.projectCode',
+                  defaultMessage: '项目编号',
+              })}
+              width="md"
+              rules={[
+                  {
+                      required: true,
+                      message: (
+                          <FormattedMessage
+                              id="pages.searchmro.projectCode"
+                              defaultMessage="请输入项目编号！"
+                          />
+                      ),
+                  },
+              ]}
+          />
+      
+          <ProFormText
+              name="salesRep"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.salesRep',
+                  defaultMessage: '销售员',
+              })}
+              width="md"
+              rules={[
+                  {
+                      required: true,
+                      message: (
+                          <FormattedMessage
+                              id="pages.searchmro.salesRep"
+                              defaultMessage="请输入销售员！"
+                          />
+                      ),
+                  },
+              ]}
+          />
+      
+          <ProFormText
+              name="clientName"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.clientName',
+                  defaultMessage: '终端单位名称',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="orderChannel"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.orderChannel',
+                  defaultMessage: '平台/线下',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="channelCoefficient"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.channelCoefficient',
+                  defaultMessage: '平台系数',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="orderSummary"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.orderSummary',
+                  defaultMessage: '下单概况',
+              })}
+              width="md"
+          />
+      
+          <ProFormDatePicker
+              name="orderDate"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.orderDate',
+                  defaultMessage: '下单日期',
+              })}
+              width="md"
               fieldProps={{
-              showSearch: true,
-              filterOption: false, // Disable default filtering
-              onSearch: (value) => setSearchGoodsValue(value), // Update search value
-              options: filteredGoodsOptions, // Use filtered options
+                  showTime: { format: 'HH:mm:ss' },
+                  format: 'YYYY-MM-DDTHH:mm:ss',
               }}
-              rules={[{ required: true, message: (
-                  <FormattedMessage
-                      id="pages.searchorders.goodsId"
-                      defaultMessage="请选择商品！"
-                  />
-              )}]}
-            />
-            <ProFormText
-            name="deliveryNo"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.deliveryNo',
-                defaultMessage: '配送单号',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.deliveryNo"
-                    defaultMessage="请输入配送单号！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="deliveryNoRow"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.deliveryNoRow',
-                defaultMessage: '配送单行',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.deliveryNoRow"
-                    defaultMessage="请输入配送单行！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="invoiceName"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.invoiceName',
-                defaultMessage: '商品开票名称',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.invoiceName"
-                    defaultMessage="请输入商品开票名称！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="num"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.num',
-                defaultMessage: '数量',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.num"
-                    defaultMessage="请输入数量！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="purchaseMultiple"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.purchaseMultiple',
-                defaultMessage: '采购倍数',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.purchaseMultiple"
-                    defaultMessage="请输入采购倍数！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="taxRate"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.taxRate',
-                defaultMessage: '税率',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.taxRate"
-                    defaultMessage="请输入税率！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="priceWithoutTax"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.priceWithoutTax',
-                defaultMessage: '不含税单价',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.priceWithoutTax"
-                    defaultMessage="请输入不含税单价！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="price"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.price',
-                defaultMessage: '单价',
-            })}
-            width="md"
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.price"
-                    defaultMessage="请输入单价！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="amountBeforeDiscount"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.amountBeforeDiscount',
-                defaultMessage: '折扣前总价',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.amountBeforeDiscount"
-                    defaultMessage="请选择折扣前总价！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="discount"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.discount',
-                defaultMessage: '优惠金额',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.discount"
-                    defaultMessage="请选择优惠金额！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="totalAmountWithoutTax"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.totalAmountWithoutTax',
-                defaultMessage: '不含税最终总价',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.totalAmountWithoutTax"
-                    defaultMessage="请选择不含税最终总价！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="totalAmount"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.totalAmount',
-                defaultMessage: '最终总价',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.totalAmount"
-                    defaultMessage="请选择最终总价！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="discountName"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.discountName',
-                defaultMessage: '促销优惠名称',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.discountName"
-                    defaultMessage="请选择促销优惠名称！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="discountType"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.discountType',
-                defaultMessage: '优惠券类型',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.discountType"
-                    defaultMessage="请选择优惠券类型！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="status"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.status',
-                defaultMessage: '状态',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.status"
-                    defaultMessage="请选择状态！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormDatePicker
-                name="reviewTime"
-                width="md"
-                fieldProps={{
-                    showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DDTHH:mm:ss',
-                }}
-                label={intl.formatMessage({
-                id: 'pages.searchorders.reviewTime',
-                defaultMessage: '复核时间',
-                })}
-                // rules={[
-                //   {
-                //     message: (
-                //       <FormattedMessage
-                //         id="pages.searchorders.receiveTime"
-                //         defaultMessage="请选择复核时间！"
-                //       />
-                //     ),
-                //   },
-                // ]}
-            />
-            <ProFormText
-            name="reviewStatus"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.reviewStatus',
-                defaultMessage: '复核状态',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.reviewStatus"
-                    defaultMessage="请选择复核状态！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormDatePicker
-                name="receiveTime"
-                width="md"
-                fieldProps={{
-                    showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DDTHH:mm:ss',
-                }}
-                label={intl.formatMessage({
-                    id: 'pages.searchorders.receiveTime',
-                    defaultMessage: '收货时间',
-                })}
-                // rules={[
-                //   {
-                //     message: (
-                //       <FormattedMessage
-                //         id="pages.searchorders.receiveTime"
-                //         defaultMessage="请选择收货时间！"
-                //       />
-                //     ),
-                //   },
-                // ]}
-            />
-            <ProFormDatePicker
-                name="returnReceiveTime"
-                width="md"
-                fieldProps={{
-                    showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DDTHH:mm:ss',
-                }}
-                label={intl.formatMessage({
-                id: 'pages.searchorders.returnReceiveTime',
-                defaultMessage: '退货收货时间',
-                })}
-                // rules={[
-                //   {
-                //     message: (
-                //       <FormattedMessage
-                //         id="pages.searchorders.returnReceiveTime"
-                //         defaultMessage="请选择退货收货时间！"
-                //       />
-                //     ),
-                //   },
-                // ]}
-            />
-            <ProFormSelect
-              name="customerId"
-              label={<FormattedMessage id="pages.searchorders.customerId" defaultMessage="customerId" />}
-              fieldProps={{
-              showSearch: true,
-              filterOption: false, // Disable default filtering
-              onSearch: (value) => setSearchValue(value), // Update search value
-              options: filteredOptions, // Use filtered options
+          />
+      
+          <ProFormText
+              name="productInquiryDescription"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.productInquiryDescription',
+                  defaultMessage: '客户询价商品描述',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="quantity"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.quantity',
+                  defaultMessage: '数量',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="unit"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.unit',
+                  defaultMessage: '单位',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="salesPricePerUnit"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.salesPricePerUnit',
+                  defaultMessage: '销售含税单价',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="salesTotalPrice"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.salesTotalPrice',
+                  defaultMessage: '销售含税总价',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="settlementPricePerUnit"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.settlementPricePerUnit',
+                  defaultMessage: '结算含税单价',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="settlementTotalPrice"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.settlementTotalPrice',
+                  defaultMessage: '结算含税总价',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="recipientName"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.recipientName',
+                  defaultMessage: '收货人名称',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="recipientPhone"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.recipientPhone',
+                  defaultMessage: '收货人电话',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="deliveryAddress"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.deliveryAddress',
+                  defaultMessage: '客户收货地址',
+              })}
+              width="md"
+          />
+      
+          <ProFormDatePicker
+              name="requestedDeliveryDate"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.requestedDeliveryDate',
+                  defaultMessage: '客户要求交货日期',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="procurementCode"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.procurementCode',
+                  defaultMessage: '采购编码',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="platformAmount"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.platformAmount',
+                  defaultMessage: '平台金额',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="supplierName"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.supplierName',
+                  defaultMessage: '供应商名称',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="materialCode"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.materialCode',
+                  defaultMessage: '物料编码',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="brand"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.brand',
+                  defaultMessage: '品牌',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="productName"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.productName',
+                  defaultMessage: '产品名称',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="productModel"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.productModel',
+                  defaultMessage: '产品型号',
+              })}
+              width="md"
+          />
+      
+          <ProFormDatePicker
+              name="supplierDeliveryTime"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.supplierDeliveryTime',
+                  defaultMessage: '供货商交货货期',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="purchasePrice"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.purchasePrice',
+                  defaultMessage: '采购单价',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="purchaseTotalPrice"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.purchaseTotalPrice',
+                  defaultMessage: '采购总价',
+              })}
+              width="md"
+          />
+      
+          <ProFormSelect
+              name="isTaxShippingInclusive"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.isTaxShippingInclusive',
+                  defaultMessage: '是否含税含运',
+              })}
+              width="md"
+              valueEnum={{
+                  true: '是',
+                  false: '否',
               }}
-              rules={[{ required: true, message: (
-                <FormattedMessage
-                    id="pages.searchorders.customerId"
-                    defaultMessage="请选择客户！"
-                />
-            )}]}
-            />
-            <ProFormDatePicker
-                name="createTime"
-                width="md"
-                fieldProps={{
-                    showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DDTHH:mm:ss',
-                }}
-                label={intl.formatMessage({
-                id: 'pages.searchorders.createTime',
-                defaultMessage: '订单创建时间',
-                })}
-                // rules={[
-                //   {
-                //     message: (
-                //       <FormattedMessage
-                //         id="pages.searchorders.createTime"
-                //         defaultMessage="请选择订单创建时间！"
-                //       />
-                //     ),
-                //   },
-                // ]}
-            />
-            <ProFormDatePicker
-                name="takeTime"
-                width="md"
-                fieldProps={{
-                    showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DDTHH:mm:ss',
-                }}
-                label={intl.formatMessage({
-                id: 'pages.searchorders.takeTime',
-                defaultMessage: '接单时间',
-                })}
-                // rules={[
-                //   {
-                //     message: (
-                //       <FormattedMessage
-                //         id="pages.searchorders.takeTime"
-                //         defaultMessage="请选择接单时间！"
-                //       />
-                //     ),
-                //   },
-                // ]}
-            />
-            <ProFormDatePicker
-                name="deliveryTime"
-                width="md"
-                fieldProps={{
-                    showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DDTHH:mm:ss',
-                }}
-                label={intl.formatMessage({
-                id: 'pages.searchorders.deliveryTime',
-                defaultMessage: '发货时间',
-                })}
-                // rules={[
-                //   {
-                //     message: (
-                //       <FormattedMessage
-                //         id="pages.searchorders.deliveryTime"
-                //         defaultMessage="请选择发货时间！"
-                //       />
-                //     ),
-                //   },
-                // ]}
-            />
-            <ProFormDatePicker
-                name="signatureTime"
-                width="md"
-                fieldProps={{
-                    showTime: { format: 'HH:mm:ss' },
-                    format: 'YYYY-MM-DDTHH:mm:ss',
-                }}
-                label={intl.formatMessage({
-                id: 'pages.searchorders.signatureTime',
-                defaultMessage: '签收时间',
-                })}
-                // rules={[
-                //   {
-                //     message: (
-                //       <FormattedMessage
-                //         id="pages.searchorders.signatureTime"
-                //         defaultMessage="请选择签收时间！"
-                //       />
-                //     ),
-                //   },
-                // ]}
-            />
-            <ProFormText
-            name="commissionRate"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.commissionRate',
-                defaultMessage: '佣金率',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.commissionRate"
-                    defaultMessage="请选择佣金率！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="commission"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.commission',
-                defaultMessage: '佣金',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.commission"
-                    defaultMessage="请选择佣金！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="paymentMethod"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.paymentMethod',
-                defaultMessage: '支付方式',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.paymentMethod"
-                    defaultMessage="请选择支付方式！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="onlinePaymentTransactionNo"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.onlinePaymentTransactionNo',
-                defaultMessage: '在线支付银行流水号',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.onlinePaymentTransactionNo"
-                    defaultMessage="请选择在线支付银行流水号！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="offlinePaymentBankInfo"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.offlinePaymentBankInfo',
-                defaultMessage: '线下支付付款银行信息',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.offlinePaymentBankInfo"
-                    defaultMessage="请选择线下支付付款银行信息！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="platformPaymentStatus"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.platformPaymentStatus',
-                defaultMessage: '平台付款状态',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.platformPaymentStatus"
-                    defaultMessage="请选择平台付款状态！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="vmiPaymentStatus"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.vmiPaymentStatus',
-                defaultMessage: 'VMI付款状态',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.vmiPaymentStatus"
-                    defaultMessage="请选择VMI付款状态！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormSelect
-                name="isGsudaDelivery"
-                label={intl.formatMessage({
-                    id: 'pages.searchorders.isGsudaDelivery',
-                    defaultMessage: 'G速达配送',
-                })}
-                width="md"
-                valueEnum={{
-                    true: '是',
-                    false: '否',
-                }}
-            />
-            <ProFormText
-            name="shippingWarehouseType"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.shippingWarehouseType',
-                defaultMessage: '配送单仓库类型',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.shippingWarehouseType"
-                    defaultMessage="请选择配送单仓库类型！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="services"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.services',
-                defaultMessage: '所选服务',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.services"
-                    defaultMessage="请选择所选服务！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormText
-            name="servicePriceAdjust"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.servicePriceAdjust',
-                defaultMessage: '服务项单价调整',
-            })}
-            rules={[
-                {
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.servicePriceAdjust"
-                    defaultMessage="请选择服务项单价调整！"
-                    />
-                ),
-                },
-            ]}
-            />
-            <ProFormTextArea
-            name="remark"
-            width="md"
-            label={intl.formatMessage({
-                id: 'pages.searchorders.remark',
-                defaultMessage: '备注',
-            })}
-            // placeholder={intl.formatMessage({
-            //   id: 'pages.searchgoods.remark',
-            //   defaultMessage: '请输入备注！',
-            // })}
-            rules={[
-                {
-                // required: true,
-                message: (
-                    <FormattedMessage
-                    id="pages.searchorders.remark"
-                    defaultMessage="请输入备注！"
-                    />
-                ),
-                // min: 5,
-                },
-            ]}
-            />
-        </ModalForm>
+          />
+      
+          <ProFormText
+              name="grossProfit"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.grossProfit',
+                  defaultMessage: '毛利额',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="grossMargin"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.grossMargin',
+                  defaultMessage: '毛利率',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="paymentMethod"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.paymentMethod',
+                  defaultMessage: '付款方式',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="platformSku"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.platformSku',
+                  defaultMessage: '平台SKU编码',
+              })}
+              width="md"
+          />
+      
+          <ProFormSelect
+              name="isOrderedOnPlatform"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.isOrderedOnPlatform',
+                  defaultMessage: '是否已在平台下单',
+              })}
+              width="md"
+              valueEnum={{
+                  true: '是',
+                  false: '否',
+              }}
+          />
+      
+          <ProFormText
+              name="procurementInvoiceNumber"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.procurementInvoiceNumber',
+                  defaultMessage: '采购发票号',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="procurementInvoiceAmount"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.procurementInvoiceAmount',
+                  defaultMessage: '采购发票金额',
+              })}
+              width="md"
+          />
+      
+          <ProFormDatePicker
+              name="procurementInvoiceDate"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.procurementInvoiceDate',
+                  defaultMessage: '采购发票日期',
+              })}
+              width="md"
+          />
+      
+          <ProFormTextArea
+              name="purchaseNote"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.purchaseNote',
+                  defaultMessage: '采购备注',
+              })}
+              width="md"
+          />
+      
+          <ProFormDatePicker
+              name="billingDate"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.billingDate',
+                  defaultMessage: '开票日期',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="salesInvoiceNumber"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.salesInvoiceNumber',
+                  defaultMessage: '销售发票号',
+              })}
+              width="md"
+          />
+      
+          <ProFormText
+              name="invoiceAmount"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.invoiceAmount',
+                  defaultMessage: '发票金额',
+              })}
+              width="md"
+          />
+      
+          <ProFormDatePicker
+              name="receivablesDate"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.receivablesDate',
+                  defaultMessage: '应收日期',
+              })}
+              width="md"
+          />
+      
+          <ProFormSelect
+              name="isPaymentReceived"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.isPaymentReceived',
+                  defaultMessage: '是否收款',
+              })}
+              width="md"
+              valueEnum={{
+                  true: '是',
+                  false: '否',
+              }}
+          />
+      
+          <ProFormText
+              name="paymentReceivedAmount"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.paymentReceivedAmount',
+                  defaultMessage: '已收款金额',
+              })}
+              width="md"
+          />
+      
+          <ProFormTextArea
+              name="adjustmentNote"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.adjustmentNote',
+                  defaultMessage: '调整说明',
+              })}
+              width="md"
+          />
+      
+          <ProFormTextArea
+              name="saleNote"
+              label={intl.formatMessage({
+                  id: 'pages.searchmro.saleNote',
+                  defaultMessage: '销售备注',
+              })}
+              width="md"
+          />
+      </ModalForm>
+      
         )}
       {currentRow && (
         <UpdateForm
@@ -1335,7 +1062,7 @@ const Mro: React.FC = () => {
             closable={false}
         >
             {currentRow?.code && (
-            <ProDescriptions<API.OrdersListItem>
+            <ProDescriptions<API.MroListItem>
                 column={2}
                 title={currentRow?.code}
                 request={async () => ({
@@ -1344,7 +1071,7 @@ const Mro: React.FC = () => {
                 params={{
                 id: currentRow?.code,
                 }}
-                columns={columns as ProDescriptionsItemProps<API.OrdersListItem>[]}
+                columns={columns as ProDescriptionsItemProps<API.MroListItem>[]}
             />
             )}
         </Drawer>

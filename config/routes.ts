@@ -79,7 +79,6 @@ export default [
     name: 'orders',
     icon: 'table',
     path: '/orders',
-    component: './Orders',
     routes: [
       {
         name: 'hotel',

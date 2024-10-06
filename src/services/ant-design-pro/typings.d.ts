@@ -272,4 +272,71 @@ declare namespace API {
     total?: number;
     success?: boolean;
   };
+
+  type MroListItem = {
+    id?: string;
+    projectCode?: string;
+    salesRep?: string;
+    clientName?: string;
+    orderChannel?: string;
+    channelCoefficient?: string;
+    orderSummary?: string;
+    orderDate?: string;
+    productInquiryDescription?: string;
+    quantity?: string;
+    unit?: string;
+    salesPricePerUnit?: string;
+    salesTotalPrice?: string;
+    settlementPricePerUnit?: string;
+    settlementTotalPrice?: string;
+    recipientName?: string;
+    recipientPhone?: string;
+    deliveryAddress?: string;
+    requestedDeliveryDate?: string;
+    procurementCode?: string;
+    platformAmount?: string;
+    supplierName?: string;
+    materialCode?: string;
+    brand?: string;
+    productName?: string;
+    productModel?: string;
+    supplierDeliveryTime?: string;
+    purchasePrice?: string;
+    purchaseTotalPrice?: string;
+    isTaxShippingInclusive?: string;
+    grossProfit?: string;
+    grossMargin?: string;
+    paymentMethod?: string;
+    platformSku?: string;
+    isOrderedOnPlatform?: string;
+    platformOrderNumber?: string;
+    supplierPaymentDate?: string;
+    purchasePaymentAmount?: string;
+    logisticsCompany?: string;
+    trackingNumber?: string;
+    deliveryStatus?: string;
+    arrivalDate?: string;
+    isInvoiceReceived?: string;
+    procurementInvoiceNumber?: string;
+    procurementInvoiceAmount?: string;
+    procurementInvoiceDate?: string;
+    purchaseNote?: string;
+    billingDate?: string;
+    salesInvoiceNumber?: string;
+    invoiceAmount?: string;
+    receivablesDate?: string;
+    isPaymentReceived?: string;
+    paymentReceivedAmount?: string;
+    adjustmentNote?: string;
+    saleNote?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+
+  type MroList = {
+    data?: MroListItem[];
+    /** 列表的内容总数 */
+    total?: number;
+    success?: boolean;
+  };
 }
