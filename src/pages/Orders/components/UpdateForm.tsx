@@ -358,16 +358,16 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             defaultMessage: '采购倍数',
           })}
           width="md"
-          rules={[
-            {
-              message: (
-                <FormattedMessage
-                  id="pages.searchorders.purchaseMultiple"
-                  defaultMessage="请输入采购倍数！"
-                />
-              ),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchorders.purchaseMultiple"
+          //         defaultMessage="请输入采购倍数！"
+          //       />
+          //     ),
+          //   },
+          // ]}
         />
         <ProFormText
           name="taxRate"
@@ -376,16 +376,16 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             defaultMessage: '税率',
           })}
           width="md"
-          rules={[
-            {
-              message: (
-                <FormattedMessage
-                  id="pages.searchorders.taxRate"
-                  defaultMessage="请输入税率！"
-                />
-              ),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchorders.taxRate"
+          //         defaultMessage="请输入税率！"
+          //       />
+          //     ),
+          //   },
+          // ]}
         />
         <ProFormText
           name="priceWithoutTax"
@@ -394,16 +394,16 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             defaultMessage: '不含税单价',
           })}
           width="md"
-          rules={[
-            {
-              message: (
-                <FormattedMessage
-                  id="pages.searchorders.priceWithoutTax"
-                  defaultMessage="请输入不含税单价！"
-                />
-              ),
-            },
-          ]}
+          // rules={[
+          //   {
+          //     message: (
+          //       <FormattedMessage
+          //         id="pages.searchorders.priceWithoutTax"
+          //         defaultMessage="请输入不含税单价！"
+          //       />
+          //     ),
+          //   },
+          // ]}
         />
       </StepsForm.StepForm>
       <StepsForm.StepForm

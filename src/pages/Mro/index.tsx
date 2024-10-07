@@ -221,7 +221,6 @@ const Mro: React.FC = () => {
         title: <FormattedMessage id="pages.searchmro.isOrderedOnPlatform" defaultMessage="平台是否下单" />,
         dataIndex: 'isOrderedOnPlatform',
         valueType: 'select',
-        render: (text) => text ? '是' : '否',
         valueEnum: {
             true: '是',
             false: '否',
@@ -266,7 +265,6 @@ const Mro: React.FC = () => {
         title: <FormattedMessage id="pages.searchmro.isInvoiceReceived" defaultMessage="是否回票" />,
         dataIndex: 'isInvoiceReceived',
         valueType: 'select',
-        render: (text) => text ? '是' : '否',
         valueEnum: {
             true: '是',
             false: '否',
@@ -915,6 +913,79 @@ const Mro: React.FC = () => {
                   false: '否',
               }}
           />
+
+          <ProFormText
+              name="platformOrderNumber"
+              label={intl.formatMessage({
+                id: 'pages.searchmro.platformOrderNumber',
+                defaultMessage: '平台订单号',
+              })}
+              width="md"
+          />
+          <ProFormDatePicker
+              name="supplierPaymentDate"
+              label={intl.formatMessage({
+                id: 'pages.searchmro.supplierPaymentDate',
+                defaultMessage: '供应商付款时间',
+              })}
+              width="md"
+          />
+          <ProFormText
+              name="purchasePaymentAmount"
+              label={intl.formatMessage({
+                id: 'pages.searchmro.purchasePaymentAmount',
+                defaultMessage: '采购付款金额',
+              })}
+              width="md"
+          />
+          <ProFormText
+              name="logisticsCompany"
+              label={intl.formatMessage({
+                id: 'pages.searchmro.logisticsCompany',
+                defaultMessage: '物流公司',
+              })}
+              width="md"
+          />
+          <ProFormText
+              name="trackingNumber"
+              label={intl.formatMessage({
+                id: 'pages.searchmro.trackingNumber',
+                defaultMessage: '发货物流单号',
+              })}
+              width="md"
+          />
+          <ProFormSelect
+              name="deliveryStatus"
+              label={intl.formatMessage({
+                id: 'pages.searchmro.deliveryStatus',
+                defaultMessage: '到货情况',
+              })}
+              width="md"
+              valueEnum={{
+                arrived: '已到货',
+                notArrived: '未到货',
+              }}
+          />
+          <ProFormDatePicker
+              name="arrivalDate"
+              label={intl.formatMessage({
+                id: 'pages.searchmro.arrivalDate',
+                defaultMessage: '到货日期',
+              })}
+              width="md"
+          />
+          <ProFormSelect
+              name="isInvoiceReceived"
+              label={intl.formatMessage({
+                id: 'pages.searchmro.isInvoiceReceived',
+                defaultMessage: '是否回票',
+              })}
+              width="md"
+              valueEnum={{
+                true: '是',
+                false: '否',
+              }}
+          />
       
           <ProFormText
               name="procurementInvoiceNumber"
@@ -1061,15 +1132,15 @@ const Mro: React.FC = () => {
             }}
             closable={false}
         >
-            {currentRow?.code && (
+            {currentRow?.projectCode && (
             <ProDescriptions<API.MroListItem>
                 column={2}
-                title={currentRow?.code}
+                title={currentRow?.projectCode}
                 request={async () => ({
                 data: currentRow || {},
                 })}
                 params={{
-                id: currentRow?.code,
+                id: currentRow?.projectCode,
                 }}
                 columns={columns as ProDescriptionsItemProps<API.MroListItem>[]}
             />

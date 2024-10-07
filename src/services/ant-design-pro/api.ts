@@ -635,11 +635,11 @@ export async function removeOrder(ids: any) {
   }
 }
 
-/** 获取MRO订单信息 GET /mro/search */
+/** 获取MRO订单信息 GET /mro-orders/search */
 export async function mro(params: API.PageParams) {
   const { current, pageSize, ...restParams } = params;
   try {
-    const response = await request('/mro/search', {
+    const response = await request('/mro-orders/search', {
       method: 'GET',
       params: {
         ...restParams,
@@ -661,10 +661,10 @@ export async function mro(params: API.PageParams) {
   }
 }
 
-/** 更新MRO订单信息 PUT /orders */
+/** 更新MRO订单信息 PUT /mro-orders */
 export async function updateMro(id: string, data: any) {
   try {
-    const response = await request<API.MroListItem>(`/mro/${id}`, {
+    const response = await request<API.MroListItem>(`/mro-orders/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -680,9 +680,9 @@ export async function updateMro(id: string, data: any) {
 }
 
 
-/** 新建MRO订单信息 POST /mro */
+/** 新建MRO订单信息 POST /mro-orders */
 export async function addMro(options?: { [key: string]: any }) {
-  return request<API.MroListItem>('/mro', {
+  return request<API.MroListItem>('/mro-orders', {
     method: 'POST',
     data:{
       ...(options || {}),
@@ -690,10 +690,10 @@ export async function addMro(options?: { [key: string]: any }) {
   });
 }
 
-/** 删除MRO订单信息 DELETE /Mro/batch */
+/** 删除MRO订单信息 DELETE /mro-orders/batch */
 export async function removeMro(ids: any) {
   try {
-    const response = await request<API.MroListItem>(`/mro/batch`, {
+    const response = await request<API.MroListItem>(`/mro-orders/batch`, {
       method: 'DELETE',
       data: {ids},
       headers: {

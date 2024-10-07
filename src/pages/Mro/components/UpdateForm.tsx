@@ -81,6 +81,11 @@ export type UpdateFormProps = {
 
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const { isTaxShippingInclusive, isOrderedOnPlatform, isInvoiceReceived, isPaymentReceived } = props.values;
+  const isTaxShippingInclusives = isTaxShippingInclusive?'true' : 'false';
+  const isOrderedOnPlatforms = isOrderedOnPlatform?'true' : 'false';
+  const isInvoiceReceiveds = isInvoiceReceived?'true' : 'false';
+  const isPaymentReceiveds = isPaymentReceived?'true' : 'false';
   
   const intl = useIntl();
   return (
@@ -388,7 +393,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           supplierDeliveryTime: props.values.supplierDeliveryTime,
           purchasePrice: props.values.purchasePrice,
           purchaseTotalPrice: props.values.purchaseTotalPrice,
-          isTaxShippingInclusive: props.values.isTaxShippingInclusive,
+          isTaxShippingInclusive: isTaxShippingInclusives,
         }}
         title={intl.formatMessage({
           id: 'pages.searchmro.updateForm.basicInfo',
@@ -440,13 +445,16 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           }}
         />
         <ProFormSelect
-          name="isTaxShippingInclusive"
-          label={intl.formatMessage({ id: 'pages.searchmro.isTaxShippingInclusive', defaultMessage: '含税运费' })}
-          width="md"
-          valueEnum={{
-            true: '是',
-            false: '否',
-          }}
+            name="isTaxShippingInclusive"
+            label={intl.formatMessage({
+              id: 'pages.searchmro.isTaxShippingInclusive',
+              defaultMessage: '是否含税含运',
+            })}
+            width="md"
+            valueEnum={{
+              true: '是',
+              false: '否',
+            }}
         />
       </StepsForm.StepForm>
 
@@ -457,7 +465,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           grossMargin: props.values.grossMargin,
           paymentMethod: props.values.paymentMethod,
           platformSku: props.values.platformSku,
-          isOrderedOnPlatform: props.values.isOrderedOnPlatform,
+          isOrderedOnPlatform: isOrderedOnPlatforms,
         }}
         title={intl.formatMessage({
           id: 'pages.searchmro.updateForm.basicInfo',
@@ -570,7 +578,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         initialValues={{
           deliveryStatus: props.values.deliveryStatus,
           arrivalDate: props.values.arrivalDate,
-          isInvoiceReceived: props.values.isInvoiceReceived,
+          isInvoiceReceived: isInvoiceReceiveds,
           procurementInvoiceNumber: props.values.procurementInvoiceNumber,
           procurementInvoiceAmount: props.values.procurementInvoiceAmount,
         }}
@@ -584,9 +592,9 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           label={intl.formatMessage({ id: 'pages.searchmro.deliveryStatus', defaultMessage: '交付状态' })}
           width="md"
           valueEnum={{
-            delivered: '已交付',
-            inTransit: '运输中',
-            pending: '待处理',
+            '已交付': '已交付',
+            '运输中': '运输中',
+            '待处理': '待处理',
           }}
         />
         <ProFormDatePicker
@@ -684,7 +692,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       <StepsForm.StepForm
         initialValues={{
           receivablesDate: props.values.receivablesDate,
-          isPaymentReceived: props.values.isPaymentReceived,
+          isPaymentReceived: isPaymentReceiveds,
           paymentReceivedAmount: props.values.paymentReceivedAmount,
           adjustmentNote: props.values.adjustmentNote,
           saleNote: props.values.saleNote,
