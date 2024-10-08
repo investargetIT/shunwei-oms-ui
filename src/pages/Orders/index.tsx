@@ -396,7 +396,6 @@ const Orders: React.FC = () => {
     const hide = message.loading('Configuring');
     const id = fields.id;
     const values = {
-      id: fields.id,
       code: fields.code,
       type: fields.type,
       goodsId: fields.goodsId,

@@ -87,6 +87,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   const isInvoiceReceiveds = isInvoiceReceived?'true' : 'false';
   const isPaymentReceiveds = isPaymentReceived?'true' : 'false';
   
+  
   const intl = useIntl();
   return (
     <StepsForm
@@ -142,22 +143,22 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormText
           name="projectCode"
-          label={intl.formatMessage({ id: 'pages.searchmro.projectCode', defaultMessage: '项目代码' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.projectCode', defaultMessage: '项目编号' })}
           width="md"
         />
         <ProFormText
           name="salesRep"
-          label={intl.formatMessage({ id: 'pages.searchmro.salesRep', defaultMessage: '销售代表' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.salesRep', defaultMessage: '销售员' })}
           width="md"
         />
         <ProFormText
           name="clientName"
-          label={intl.formatMessage({ id: 'pages.searchmro.clientName', defaultMessage: '客户名称' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.clientName', defaultMessage: '终端单位名称' })}
           width="md"
         />
         <ProFormText
           name="orderChannel"
-          label={intl.formatMessage({ id: 'pages.searchmro.orderChannel', defaultMessage: '订单渠道' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.orderChannel', defaultMessage: '平台/线下' })}
           width="md"
         />
       </StepsForm.StepForm>
@@ -178,22 +179,22 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <ProFormText
           name="channelCoefficient"
-          label={intl.formatMessage({ id: 'pages.searchmro.channelCoefficient', defaultMessage: '渠道系数' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.channelCoefficient', defaultMessage: '平台系数' })}
           width="md"
         />
-        <ProFormTextArea
+        <ProFormText
           name="orderSummary"
-          label={intl.formatMessage({ id: 'pages.searchmro.orderSummary', defaultMessage: '订单摘要' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.orderSummary', defaultMessage: '下单概况' })}
           width="md"
         />
         <ProFormDatePicker
           name="orderDate"
-          label={intl.formatMessage({ id: 'pages.searchmro.orderDate', defaultMessage: '订单日期' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.orderDate', defaultMessage: '下单日期' })}
           width="md"
         />
-        <ProFormTextArea
+        <ProFormText
           name="productInquiryDescription"
-          label={intl.formatMessage({ id: 'pages.searchmro.productInquiryDescription', defaultMessage: '产品咨询描述' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.productInquiryDescription', defaultMessage: '客户询价商品描述' })}
           width="md"
         />
         <ProFormText
@@ -224,71 +225,71 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormText
           name="salesPricePerUnit"
-          label={intl.formatMessage({ id: 'pages.searchmro.salesPricePerUnit', defaultMessage: '单价' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.salesPricePerUnit', defaultMessage: '销售含税单价' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.salesPricePerUnit',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.salesPricePerUnit',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
         <ProFormText
           name="salesTotalPrice"
-          label={intl.formatMessage({ id: 'pages.searchmro.salesTotalPrice', defaultMessage: '总价' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.salesTotalPrice', defaultMessage: '销售含税总价' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.salesTotalPrice',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.salesTotalPrice',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
         <ProFormText
           name="settlementPricePerUnit"
-          label={intl.formatMessage({ id: 'pages.searchmro.settlementPricePerUnit', defaultMessage: '结算单价' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.settlementPricePerUnit', defaultMessage: '结算含税单价' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.settlementPricePerUnit',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.settlementPricePerUnit',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
         <ProFormText
           name="settlementTotalPrice"
-          label={intl.formatMessage({ id: 'pages.searchmro.settlementTotalPrice', defaultMessage: '结算总价' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.settlementTotalPrice', defaultMessage: '结算含税总价' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.settlementTotalPrice',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.settlementTotalPrice',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
       </StepsForm.StepForm>
 
@@ -308,27 +309,27 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <ProFormText
           name="recipientName"
-          label={intl.formatMessage({ id: 'pages.searchmro.recipientName', defaultMessage: '收件人姓名' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.recipientName', defaultMessage: '收货人名称' })}
           width="md"
         />
         <ProFormText
           name="recipientPhone"
-          label={intl.formatMessage({ id: 'pages.searchmro.recipientPhone', defaultMessage: '收件人电话' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.recipientPhone', defaultMessage: '收货人电话' })}
           width="md"
         />
-        <ProFormTextArea
+        <ProFormText
           name="deliveryAddress"
-          label={intl.formatMessage({ id: 'pages.searchmro.deliveryAddress', defaultMessage: '送货地址' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.deliveryAddress', defaultMessage: '客户收货地址' })}
           width="md"
         />
         <ProFormDatePicker
           name="requestedDeliveryDate"
-          label={intl.formatMessage({ id: 'pages.searchmro.requestedDeliveryDate', defaultMessage: '请求送达日期' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.requestedDeliveryDate', defaultMessage: '客户要求交货日期' })}
           width="md"
         />
         <ProFormText
           name="procurementCode"
-          label={intl.formatMessage({ id: 'pages.searchmro.procurementCode', defaultMessage: '采购代码' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.procurementCode', defaultMessage: '采购编码' })}
           width="md"
         />
       </StepsForm.StepForm>
@@ -351,18 +352,18 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           name="platformAmount"
           label={intl.formatMessage({ id: 'pages.searchmro.platformAmount', defaultMessage: '平台金额' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.platformAmount',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.platformAmount',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
         <ProFormText
           name="supplierName"
@@ -371,7 +372,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormText
           name="materialCode"
-          label={intl.formatMessage({ id: 'pages.searchmro.materialCode', defaultMessage: '物料代码' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.materialCode', defaultMessage: '物料编码' })}
           width="md"
         />
         <ProFormText
@@ -405,44 +406,44 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           label={intl.formatMessage({ id: 'pages.searchmro.productModel', defaultMessage: '产品型号' })}
           width="md"
         />
-        <ProFormText
+        <ProFormDatePicker
           name="supplierDeliveryTime"
-          label={intl.formatMessage({ id: 'pages.searchmro.supplierDeliveryTime', defaultMessage: '供应商交货时间' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.supplierDeliveryTime', defaultMessage: '供货商交货货期' })}
           width="md"
         />
         <ProFormText
           name="purchasePrice"
-          label={intl.formatMessage({ id: 'pages.searchmro.purchasePrice', defaultMessage: '采购价格' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.purchasePrice', defaultMessage: '采购单价' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.purchasePrice',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.purchasePrice',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
         <ProFormText
           name="purchaseTotalPrice"
           label={intl.formatMessage({ id: 'pages.searchmro.purchaseTotalPrice', defaultMessage: '采购总价' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.purchaseTotalPrice',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.purchaseTotalPrice',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
         <ProFormSelect
             name="isTaxShippingInclusive"
@@ -474,44 +475,39 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <ProFormText
           name="grossProfit"
-          label={intl.formatMessage({ id: 'pages.searchmro.grossProfit', defaultMessage: '毛利' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.grossProfit', defaultMessage: '毛利额' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.grossProfit',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.grossProfit',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
         <ProFormText
           name="grossMargin"
           label={intl.formatMessage({ id: 'pages.searchmro.grossMargin', defaultMessage: '毛利率' })}
           width="md"
         />
-        <ProFormSelect
+        <ProFormText
           name="paymentMethod"
           label={intl.formatMessage({ id: 'pages.searchmro.paymentMethod', defaultMessage: '付款方式' })}
           width="md"
-          valueEnum={{
-            cash: '现金',
-            creditCard: '信用卡',
-            bankTransfer: '银行转账',
-          }}
         />
         <ProFormText
           name="platformSku"
-          label={intl.formatMessage({ id: 'pages.searchmro.platformSku', defaultMessage: '平台SKU' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.platformSku', defaultMessage: '平台SKU编码' })}
           width="md"
         />
         <ProFormSelect
           name="isOrderedOnPlatform"
-          label={intl.formatMessage({ id: 'pages.searchmro.isOrderedOnPlatform', defaultMessage: '是否在平台下单' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.isOrderedOnPlatform', defaultMessage: '平台是否下单' })}
           width="md"
           valueEnum={{
             true: '是',
@@ -541,25 +537,25 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormDatePicker
           name="supplierPaymentDate"
-          label={intl.formatMessage({ id: 'pages.searchmro.supplierPaymentDate', defaultMessage: '供应商付款日期' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.supplierPaymentDate', defaultMessage: '供应商付款时间' })}
           width="md"
         />
         <ProFormText
           name="purchasePaymentAmount"
           label={intl.formatMessage({ id: 'pages.searchmro.purchasePaymentAmount', defaultMessage: '采购付款金额' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.purchasePaymentAmount',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.purchasePaymentAmount',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
         <ProFormText
           name="logisticsCompany"
@@ -568,7 +564,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormText
           name="trackingNumber"
-          label={intl.formatMessage({ id: 'pages.searchmro.trackingNumber', defaultMessage: '追踪号码' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.trackingNumber', defaultMessage: '发货物流单号' })}
           width="md"
         />
       </StepsForm.StepForm>
@@ -589,7 +585,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <ProFormSelect
           name="deliveryStatus"
-          label={intl.formatMessage({ id: 'pages.searchmro.deliveryStatus', defaultMessage: '交付状态' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.deliveryStatus', defaultMessage: '到货情况' })}
           width="md"
           valueEnum={{
             '已交付': '已交付',
@@ -599,12 +595,12 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormDatePicker
           name="arrivalDate"
-          label={intl.formatMessage({ id: 'pages.searchmro.arrivalDate', defaultMessage: '到达日期' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.arrivalDate', defaultMessage: '到货日期' })}
           width="md"
         />
         <ProFormSelect
           name="isInvoiceReceived"
-          label={intl.formatMessage({ id: 'pages.searchmro.isInvoiceReceived', defaultMessage: '是否已收发票' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.isInvoiceReceived', defaultMessage: '是否回票' })}
           width="md"
           valueEnum={{
             true: '是',
@@ -618,20 +614,20 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormText
           name="procurementInvoiceAmount"
-          label={intl.formatMessage({ id: 'pages.searchmro.procurementInvoiceAmount', defaultMessage: '采购发票金额' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.procurementInvoiceAmount', defaultMessage: '回票金额' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.procurementInvoiceAmount',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.procurementInvoiceAmount',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
       </StepsForm.StepForm>
 
@@ -651,7 +647,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <ProFormDatePicker
           name="procurementInvoiceDate"
-          label={intl.formatMessage({ id: 'pages.searchmro.procurementInvoiceDate', defaultMessage: '采购发票日期' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.procurementInvoiceDate', defaultMessage: '回票日期' })}
           width="md"
         />
         <ProFormTextArea
@@ -661,7 +657,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormDatePicker
           name="billingDate"
-          label={intl.formatMessage({ id: 'pages.searchmro.billingDate', defaultMessage: '开票日期' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.billingDate', defaultMessage: '开票时间' })}
           width="md"
         />
         <ProFormText
@@ -671,20 +667,20 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormText
           name="invoiceAmount"
-          label={intl.formatMessage({ id: 'pages.searchmro.invoiceAmount', defaultMessage: '发票金额' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.invoiceAmount', defaultMessage: '开票金额' })}
           width="md"
-          fieldProps={{
-            // Use InputNumber to handle number input
-            addonBefore: intl.formatMessage({
-              id: 'pages.searchmro.invoiceAmount',
-              defaultMessage: '¥', // Example currency symbol
-            }),
-            parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
-            formatter: (value) => {
-              if (!value) return '';
-              return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
-            },
-          }}
+          // fieldProps={{
+          //   // Use InputNumber to handle number input
+          //   addonBefore: intl.formatMessage({
+          //     id: 'pages.searchmro.invoiceAmount',
+          //     defaultMessage: '¥', // Example currency symbol
+          //   }),
+          //   parser: (value) => value.replace(/^\D+/g, ''), // Remove non-numeric characters
+          //   formatter: (value) => {
+          //     if (!value) return '';
+          //     return `¥ ${value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`; // Format as currency
+          //   },
+          // }}
         />
       </StepsForm.StepForm>
 
@@ -704,12 +700,12 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <ProFormDatePicker
           name="receivablesDate"
-          label={intl.formatMessage({ id: 'pages.searchmro.receivablesDate', defaultMessage: '应收日期' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.receivablesDate', defaultMessage: '应收账款时间' })}
           width="md"
         />
         <ProFormSelect
           name="isPaymentReceived"
-          label={intl.formatMessage({ id: 'pages.searchmro.isPaymentReceived', defaultMessage: '是否已收款' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.isPaymentReceived', defaultMessage: '是否回款' })}
           width="md"
           valueEnum={{
             true: '是',
@@ -718,12 +714,12 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormText
           name="paymentReceivedAmount"
-          label={intl.formatMessage({ id: 'pages.searchmro.paymentReceivedAmount', defaultMessage: '已收款金额' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.paymentReceivedAmount', defaultMessage: '回款金额' })}
           width="md"
         />
         <ProFormTextArea
           name="adjustmentNote"
-          label={intl.formatMessage({ id: 'pages.searchmro.adjustmentNote', defaultMessage: '调整备注' })}
+          label={intl.formatMessage({ id: 'pages.searchmro.adjustmentNote', defaultMessage: '红账情况说明' })}
           width="md"
         />
         <ProFormTextArea

@@ -410,9 +410,9 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         initialValues={{
           price: props.values.price,
           amountBeforeDiscount: props.values.amountBeforeDiscount,
+          discount: props.values.discount,
           totalAmountWithoutTax: props.values.totalAmountWithoutTax,
           totalAmount: props.values.totalAmount,
-          discountName: props.values.discountName,
         }}
         title={intl.formatMessage({
           id: 'pages.searchorders.updateForm.basicConfig',

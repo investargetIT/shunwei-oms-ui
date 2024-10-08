@@ -254,7 +254,12 @@ const Mro: React.FC = () => {
     {
         title: <FormattedMessage id="pages.searchmro.deliveryStatus" defaultMessage="到货情况" />,
         dataIndex: 'deliveryStatus',
-        valueType: 'textarea',
+        valueType: 'select',
+        valueEnum :{
+          '已交付': '已交付',
+          '运输中': '运输中',
+          '待处理': '待处理',
+        }
     },
     {
         title: <FormattedMessage id="pages.searchmro.arrivalDate" defaultMessage="到货日期" />,
@@ -374,7 +379,6 @@ const Mro: React.FC = () => {
  */
   const handleAdd = async (fields: API.MroListItem) => {
     const hide = message.loading('正在添加');
-    console.log(fields)
     try {
       await addMro({ ...fields });
       hide();
@@ -397,7 +401,6 @@ const Mro: React.FC = () => {
     const hide = message.loading('Configuring');
     const id = fields.id;
     const values = {
-      id: fields.id,
       projectCode: fields.projectCode,
       salesRep: fields.salesRep,
       clientName: fields.clientName,
@@ -657,10 +660,10 @@ const Mro: React.FC = () => {
                   defaultMessage: '下单日期',
               })}
               width="md"
-              fieldProps={{
-                  showTime: { format: 'HH:mm:ss' },
-                  format: 'YYYY-MM-DDTHH:mm:ss',
-              }}
+              // fieldProps={{
+              //     showTime: { format: 'HH:mm:ss' },
+              //     format: 'YYYY-MM-DDTHH:mm:ss',
+              // }}
           />
       
           <ProFormText
@@ -962,8 +965,9 @@ const Mro: React.FC = () => {
               })}
               width="md"
               valueEnum={{
-                arrived: '已到货',
-                notArrived: '未到货',
+                '已交付': '已交付',
+                '运输中': '运输中',
+                '待处理': '待处理',
               }}
           />
           <ProFormDatePicker

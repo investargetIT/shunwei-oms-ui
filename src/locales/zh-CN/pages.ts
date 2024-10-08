@@ -254,7 +254,7 @@ export default {
 
   'pages.searchmro.createForm.newInfo': '新建信息',
   'pages.searchmro.updateForm.editInfo': '编辑信息',
-  'pages.searchmro.updateForm.basicConfig': '基本信息',
+  'pages.searchmro.updateForm.basicInfo': '基本信息',
   'pages.searchmro.title': '查询信息',
   'pages.searchmro.new': '新建',
   'pages.searchmro.chosen': '已选择',

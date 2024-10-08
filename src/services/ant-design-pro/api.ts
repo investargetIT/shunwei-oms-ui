@@ -663,6 +663,7 @@ export async function mro(params: API.PageParams) {
 
 /** 更新MRO订单信息 PUT /mro-orders */
 export async function updateMro(id: string, data: any) {
+  console.log(data)
   try {
     const response = await request<API.MroListItem>(`/mro-orders/${id}`, {
       method: 'PUT',
