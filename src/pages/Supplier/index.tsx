@@ -271,26 +271,50 @@ const Supplier: React.FC = () => {
     const [fileList, setFileList] = useState([]);
 
     // 处理文件上传变化
-    const handleUploadChange = async ({ file }) => {
-      if (file.status === 'done') {
-        message.success(`${file.name} 文件上传成功`);
-        setFileList([]); // 上传成功后清空文件列表
-      } else if (file.status === 'error') {
-        message.error(`${file.name} 文件上传失败`);
-      }
-    };
+    // const handleUploadChange = async ({ file }) => {
+    //   console.log('file', file);
+    //   if (file.status === 'done') {
+    //     message.success(`${file.name} 文件上传成功`);
+    //     setFileList([]); // 上传成功后清空文件列表
+    //   } else if (file.status === 'error') {
+    //     message.error(`${file.name} 文件上传失败`);
+    //   }
+    // };
 
     // 自定义上传函数
-    const customRequest = async ({ file, onSuccess, onError }) => {
-      try {
-        // 这里可以根据你的需求调整接口调用的方式
-        await importSuppliers(file); // 直接上传文件
-        onSuccess(); // 调用成功回调
-      } catch (error) {
-        console.error('上传错误:', error); // 打印错误
-        onError(error); // 调用错误回调
+    // const customRequest = async ({ file, onSuccess, onError }) => {
+    //   console.log('custom request');
+    //   try {
+    //     // 这里可以根据你的需求调整接口调用的方式
+    //     await importSuppliers(file); // 直接上传文件
+    //     onSuccess(); // 调用成功回调
+    //   } catch (error) {
+    //     console.error('上传错误:', error); // 打印错误
+    //     onError(error); // 调用错误回调
+    //   }
+    // };
+
+  const props: UploadProps = {
+    name: 'file',
+    multiple: false,
+    accept: '.xlsx,.xls',
+    showUploadList: false,
+    maxCount: 1,
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+    action: process.env.BASE_URL + '/suppliers/import',
+    onChange(info) {
+      const { status, response } = info.file;
+      if (status === 'done') {
+        if (response.status == 'success') {
+          message.success(`${info.file.name} 上传成功.`);
+        } else {
+          message.error(`${info.file.name} 上传失败  ${response.message}`);
+        }
       }
-    };
+    },
+  };
 
   return (
     <PageContainer>
@@ -316,14 +340,11 @@ const Supplier: React.FC = () => {
             <PlusOutlined /> <FormattedMessage id="pages.searchsupplier.new" defaultMessage="New" />
           </Button>,
           <Upload
-          customRequest={customRequest} // 使用自定义上传函数
-          onChange={handleUploadChange} // 处理文件变化
-          accept=".xls,.xlsx" // 限制文件类型
-          fileList={fileList} // 管理文件列表
-          showUploadList={true} // 显示文件上传列表
-        >
-          <Button icon={<UploadOutlined />}>点击上传 Excel 文件</Button>
-        </Upload>
+            // customRequest={customRequest} // 使用自定义上传函数
+            {...props}
+          >
+            <Button icon={<UploadOutlined />}>点击上传 Excel 文件</Button>
+          </Upload>
         ]}
         request={suppliers}
         columns={columns}
