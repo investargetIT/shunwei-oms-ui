@@ -109,6 +109,7 @@ export default {
   'pages.searchsupplier.updateForm.remark': '备注',
   'pages.searchsupplier.title': '查询信息',
   'pages.searchsupplier.new': '新建',
+  'pages.searchsupplier.import': '导入',
   'pages.searchsupplier.chosen': '已选择',
   'pages.searchsupplier.item': '项',
   'pages.searchsupplier.batchDeletion': '批量删除',

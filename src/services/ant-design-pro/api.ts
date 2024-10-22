@@ -188,6 +188,26 @@ export async function addSuppliers(options?: { [key: string]: any }) {
   });
 }
 
+/** 供应商excel上传 POST /suppliers/import */
+export async function importSuppliers(params: any) {
+  // const { file } = params;
+  // const formData = new FormData();
+  // formData.append('file', file);
+  console.log(params)
+  try {
+    const response = await request('/suppliers/import', {
+      method: 'POST',
+      file: params, // 将 FormData 作为请求体发送
+    });
+    // console.log(response)
+    return response;
+  } catch (error) {
+    console.error('Failed to upload:', error);
+    throw error;
+  }
+}
+
+
 /** 删除供应商 DELETE /suppliers/batch */
 export async function removeSuppliers(ids: any) {
   try {
@@ -201,7 +221,7 @@ export async function removeSuppliers(ids: any) {
     });
     return response;
   } catch (error) {
-    console.error('Failed to update supplier:', error);
+    console.error('Failed to update suppliers:', error);
     throw error;
   }
 }
@@ -663,7 +683,6 @@ export async function mro(params: API.PageParams) {
 
 /** 更新MRO订单信息 PUT /mro-orders */
 export async function updateMro(id: string, data: any) {
-  console.log(data)
   try {
     const response = await request<API.MroListItem>(`/mro-orders/${id}`, {
       method: 'PUT',

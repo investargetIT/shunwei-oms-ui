@@ -1,9 +1,8 @@
-import { addSuppliers, removeSuppliers, suppliers, updateSuppliers } from '@/services/ant-design-pro/api';
-import { PlusOutlined } from '@ant-design/icons';
+import { addSuppliers, removeSuppliers, suppliers, updateSuppliers, importSuppliers } from '@/services/ant-design-pro/api';
+import { PlusOutlined, UploadOutlined  } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
   FooterToolbar,
-  ModalForm,
   PageContainer,
   ProDescriptions,
   ProFormText,
@@ -12,9 +11,10 @@ import {
   StepsForm,
   ProFormSelect,
   ProFormDatePicker,
+  ModalForm,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl } from '@umijs/max';
-import { Button, Drawer, Input, message, Modal } from 'antd';
+import { Upload, Button, Drawer, Input, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { FormValueType } from './components/UpdateForm.tsx';
 import UpdateForm from './components/UpdateForm.tsx';
@@ -25,6 +25,7 @@ const Supplier: React.FC = () => {
    * @zh-CN 新建窗口的弹窗
    *  */
   const [createModalOpen, handleModalOpen] = useState<boolean>(false);
+  const [createModalImport, handleModalImport] = useState<boolean>(false);
   /**
    * @en-US The pop-up window of the distribution update window
    * @zh-CN 分布更新窗口的弹窗
@@ -232,8 +233,6 @@ const Supplier: React.FC = () => {
     }
   };
 
-
-
   /**
    *  Delete node
    * @zh-CN 删除节点
@@ -266,6 +265,33 @@ const Supplier: React.FC = () => {
     });
   };
 
+  /**
+   * @zh-CN excel导入
+   */
+    const [fileList, setFileList] = useState([]);
+
+    // 处理文件上传变化
+    const handleUploadChange = async ({ file }) => {
+      if (file.status === 'done') {
+        message.success(`${file.name} 文件上传成功`);
+        setFileList([]); // 上传成功后清空文件列表
+      } else if (file.status === 'error') {
+        message.error(`${file.name} 文件上传失败`);
+      }
+    };
+
+    // 自定义上传函数
+    const customRequest = async ({ file, onSuccess, onError }) => {
+      try {
+        // 这里可以根据你的需求调整接口调用的方式
+        await importSuppliers(file); // 直接上传文件
+        onSuccess(); // 调用成功回调
+      } catch (error) {
+        console.error('上传错误:', error); // 打印错误
+        onError(error); // 调用错误回调
+      }
+    };
+
   return (
     <PageContainer>
       <ProTable<API.SuppliersListItem, API.PageParams>
@@ -282,13 +308,22 @@ const Supplier: React.FC = () => {
         toolBarRender={() => [
           <Button
             type="primary"
-            key="primary"
+            key="new"
             onClick={() => {
               handleModalOpen(true);
             }}
           >
             <PlusOutlined /> <FormattedMessage id="pages.searchsupplier.new" defaultMessage="New" />
           </Button>,
+          <Upload
+          customRequest={customRequest} // 使用自定义上传函数
+          onChange={handleUploadChange} // 处理文件变化
+          accept=".xls,.xlsx" // 限制文件类型
+          fileList={fileList} // 管理文件列表
+          showUploadList={true} // 显示文件上传列表
+        >
+          <Button icon={<UploadOutlined />}>点击上传 Excel 文件</Button>
+        </Upload>
         ]}
         request={suppliers}
         columns={columns}
