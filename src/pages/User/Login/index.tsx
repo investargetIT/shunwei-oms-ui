@@ -178,9 +178,9 @@ const Login: React.FC = () => {
             //   maxWidth: '75vw',
             //   backgroundColor: 'white',
             // }}
-            logo={<img alt="logo" src="/logo.svg" />}
-            title="顺为工业科技"
-            subTitle="订单管理系统"
+            // logo={<img alt="logo" src="/logo.svg" />}
+            title="订单管理系统"
+            subTitle="轻量化客户定制订单管理系统"
             initialValues={{
               autoLogin: true,
             }}
@@ -367,9 +367,9 @@ const Login: React.FC = () => {
           </div> */}
           </LoginFormPage>
         </div>
-        <div style={{ position: 'fixed', left: 0, bottom: 0, width: '100%', zIndex: 1, color: 'white' }}>
+        {/* <div style={{ position: 'fixed', left: 0, bottom: 0, width: '100%', zIndex: 1, color: 'white' }}>
           <Footer />
-        </div>
+        </div> */}
       </div>
     </ConfigProvider>
   );
