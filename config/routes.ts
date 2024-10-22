@@ -51,24 +51,24 @@ export default [
   //   path: '/list',
   //   component: './TableList',
   // },
-  {
-    name: 'supplier',
-    icon: 'creditCard',
-    path: '/supplier',
-    component: './Supplier',
-  },
-  {
-    name: 'goodsCategory',
-    icon: 'apartment',
-    path: '/goodsCategory',
-    component: './GoodsCategory',
-  },
-  {
-    name: 'goods',
-    icon: 'container',
-    path: '/goods',
-    component: './Goods',
-  },
+  // {
+  //   name: 'supplier',
+  //   icon: 'creditCard',
+  //   path: '/supplier',
+  //   component: './Supplier',
+  // },
+  // {
+  //   name: 'goodsCategory',
+  //   icon: 'apartment',
+  //   path: '/goodsCategory',
+  //   component: './GoodsCategory',
+  // },
+  // {
+  //   name: 'goods',
+  //   icon: 'container',
+  //   path: '/goods',
+  //   component: './Goods',
+  // },
   {
     name: 'customer',
     icon: 'table',
@@ -94,7 +94,7 @@ export default [
   },
   {
     path: '/',
-    redirect: '/supplier',
+    redirect: '/customer',
   },
   {
     path: '*',
