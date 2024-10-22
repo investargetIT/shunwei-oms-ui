@@ -234,11 +234,11 @@ const Login: React.FC = () => {
                     size: 'large',
                     prefix: <UserOutlined />,
                   }}
-                  placeholder="手机号"
+                  placeholder="手机号/用户名"
                   rules={[
                     {
                       required: true,
-                      message: '手机号是必填项',
+                      message: '手机号或者用户名是必填项',
                     },
                   ]}
                 />
