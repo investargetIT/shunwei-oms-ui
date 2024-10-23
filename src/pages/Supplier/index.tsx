@@ -302,18 +302,17 @@ const Supplier: React.FC = () => {
         }}
         scroll={{ x: 'max-content' }}
         toolBarRender={() => [
-          <Upload {...props}>
-            <Button icon={<UploadOutlined />}>导入</Button>
-          </Upload>,
           <Button
-            type="primary"
-            key="new"
             onClick={() => {
               handleModalOpen(true);
             }}
+            icon={<PlusOutlined />}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchsupplier.new" defaultMessage="New" />
-          </Button>
+            <FormattedMessage id="pages.searchsupplier.new" defaultMessage="New" />
+          </Button>,
+          <Upload {...props}>
+            <Button type="primary" icon={<UploadOutlined />}>导入</Button>
+          </Upload>
         ]}
         request={suppliers}
         columns={columns}

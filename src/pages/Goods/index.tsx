@@ -361,6 +361,29 @@ const Goods: React.FC = () => {
     });
   };
 
+  const props = {
+    name: 'file',
+    multiple: false,
+    accept: '.xlsx,.xls',
+    showUploadList: false,
+    maxCount: 1,
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('token'),
+    },
+    action: process.env.BASE_URL + '/goods/import',
+    onChange(info) {
+      const { status, response } = info.file;
+      if (status === 'done') {
+        if (response.status == 'success') {
+          message.success(`${info.file.name} 上传成功.`);
+          actionRef.current?.reloadAndRest?.();
+        } else {
+          message.error(`${info.file.name} 上传失败  ${response.message}`);
+        }
+      }
+    },
+  };
+
   return (
     <PageContainer>
       <ProTable<API.GoodsListItem, API.PageParams>
@@ -376,14 +399,16 @@ const Goods: React.FC = () => {
         scroll={{ x: 'max-content' }}
         toolBarRender={() => [
           <Button
-            type="primary"
-            key="primary"
             onClick={() => {
               handleModalOpen(true);
             }}
+            icon={<PlusOutlined />}
           >
-            <PlusOutlined /> <FormattedMessage id="pages.searchgoods.new" defaultMessage="New" />
+            <FormattedMessage id="pages.searchgoods.new" defaultMessage="New" />
           </Button>,
+          <Upload {...props}>
+            <Button type="primary" icon={<UploadOutlined />}>导入</Button>
+          </Upload>,
         ]}
         request={goods}
         columns={columns}
