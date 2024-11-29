@@ -57,41 +57,41 @@ export default [
     path: '/supplier',
     component: './Supplier',
   },
-  {
-    name: 'goodsCategory',
-    icon: 'apartment',
-    path: '/goodsCategory',
-    component: './GoodsCategory',
-  },
+  // {
+  //   name: 'goodsCategory',
+  //   icon: 'apartment',
+  //   path: '/goodsCategory',
+  //   component: './GoodsCategory',
+  // },
   {
     name: 'goods',
     icon: 'container',
     path: '/goods',
     component: './Goods',
   },
-  {
-    name: 'customer',
-    icon: 'table',
-    path: '/customer',
-    component: './Customer',
-  },
-  {
-    name: 'orders',
-    icon: 'table',
-    path: '/orders',
-    routes: [
-      {
-        name: 'hotel',
-        path: 'hotel',
-        component: './Orders',
-      },
-      {
-        name: 'mro',
-        path: 'mro',
-        component: './Mro',
-      },
-    ],
-  },
+  // {
+  //   name: 'customer',
+  //   icon: 'table',
+  //   path: '/customer',
+  //   component: './Customer',
+  // },
+  // {
+  //   name: 'orders',
+  //   icon: 'table',
+  //   path: '/orders',
+  //   routes: [
+  //     {
+  //       name: 'hotel',
+  //       path: 'hotel',
+  //       component: './Orders',
+  //     },
+  //     {
+  //       name: 'mro',
+  //       path: 'mro',
+  //       component: './Mro',
+  //     },
+  //   ],
+  // },
   {
     path: '/',
     redirect: '/supplier',
